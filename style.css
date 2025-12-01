@@ -1,5 +1,3 @@
-
-
 /* ==============================
    GENEL
 ============================== */
@@ -34,15 +32,28 @@ body{
   padding:25px 15px; display:flex; flex-direction:column;
   box-shadow:3px 0 12px rgba(0,0,0,.25);
 }
+
+/* NEW: scroll container so bottom button never overflows */
+.sidebar-scroll{
+  flex:1;
+  overflow-y:auto;
+  padding-bottom:40px;
+}
+
 .sidebar-header{ text-align:center; padding:10px 0 20px }
 .sidebar-logo{ width:130px; height:auto; display:block; margin:0 auto 8px }
 .sidebar-title{ font-size:18px; font-weight:700; line-height:1.2 }
 
 .menu{ list-style:none; padding:0; margin:35px 0 0 }
 .menu li{
-  background:var(--sidebar-2); padding:13px; margin-bottom:12px;
-  text-align:center; border-radius:8px; cursor:pointer; font-size:16px;
-  transition:.2s
+  background:var(--sidebar-2);
+  padding:10px;                 /* smaller height */
+  margin-bottom:8px;            /* tighter spacing */
+  text-align:center;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;               /* smaller font */
+  transition:.2s;
 }
 .menu li:hover{ background:#24445f }
 .menu li.active{ background:var(--brand)!important; font-weight:700 }
@@ -89,11 +100,6 @@ body{
 .orders-table td{
   padding:13px; border-bottom:1px solid #f0f0f0; font-size:14px; white-space:nowrap
 }
-.orders-table tbody tr,
-.orders-table tbody tr td{
-  cursor:pointer;
-  user-select:none;
-}
 .orders-table tr:hover{
   background:#d8e9d8;
   box-shadow:inset 4px 0 var(--brand);
@@ -104,37 +110,10 @@ body{
   border:none; border-radius:6px; color:#fff; cursor:pointer; font-size:13px
 }
 
-.error-chip{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 10px;
-  max-width:240px;
-  background:#fcebea;
-  color:#9b1c1c;
-  border:1px solid #f5c6cb;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-.error-chip__label{
-  font-weight:700;
-  font-size:12px;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-
-.error-chip__text{
-  font-size:13px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
 .btn-load-more{
   margin:20px auto; display:block; padding:12px 20px;
   background:var(--brand-2); color:#fff; border:none; border-radius:8px; cursor:pointer
 }
-.btn-load-more:hover{ filter:brightness(.95) }
 
 /* ==============================
    MODAL
@@ -145,34 +124,27 @@ body{
   background:rgba(0,0,0,.45); backdrop-filter:blur(2px)
 }
 
-/* === Sipariş Detayı Modal / DAR ve UZUN Tasarım === */
+/* Slim, tall modal */
 .modal-content {
-  width: 550px !important;          /* DAR modal (eski kare görünüm kalkar) */
-  max-height: 92vh !important;      /* ekranın %92’sine kadar yükseklik */
-  min-height: 700px !important;     /* daha uzun görünmesi için minimum boy */
-  
-  overflow-y: auto !important;      /* içerik taşarsa kaydırma */
+  width: 550px !important;
+  max-height: 92vh !important;
+  min-height: 700px !important;
+  overflow-y: auto !important;
   background: #fff;
-  
   margin: 40px auto;
   padding: 28px;
   border-radius: 18px;
-
   box-shadow: 0 12px 40px rgba(0,0,0,.25);
-
-  transform: scale(0.96);           /* hafif küçült → premium görünüm */
+  transform: scale(0.96);
   transform-origin: top center;
 }
 
-
-@keyframes fadeIn{ from{opacity:0; transform:translateY(-8px)} to{opacity:1; transform:none} }
 .modal h2{ margin:0 0 10px; color:var(--brand); font-size:22px }
 .close{ float:right; font-size:26px; cursor:pointer; color:#666 }
 
 .modal-btns{ margin-top:18px; display:flex; gap:10px; flex-wrap:wrap }
 .modal-btns button{ min-width:120px }
 
-/* BUTTONS - YENİ DÜZENLİ QUEEN STİLİ */
 .btn-primary,
 .btn-secondary,
 .btn-warning,
@@ -184,13 +156,12 @@ body{
   border-radius:8px;
   cursor:pointer;
   font-size:14px;
-  height:44px;             /* tüm butonlar eşitlendi */
+  height:44px;
   display:flex;
   align-items:center;
   justify-content:center;
 }
 
-/* renkler */
 .btn-primary{ background:var(--brand); color:#fff }
 .btn-secondary{ background:var(--brand-2); color:#fff }
 .btn-warning{ background:var(--warning); color:#000 }
@@ -198,212 +169,12 @@ body{
 .btn-close{ background:#ccc; color:#000 }
 .btn-danger{ background:var(--danger); color:#fff !important }
 
-.btn-primary:hover,
-.btn-secondary:hover,
-.btn-warning:hover,
-.btn-danger:hover,
-.btn-waiting:hover,
-.btn-close:hover{ opacity:.9 }
-
-/* Mini buton (Şehir/İlçe SOR) */
-.btn-mini{
-  display:inline-block; padding:4px 8px; font-size:12px;
-  border:none; border-radius:6px; background:var(--brand-2); color:#fff; margin-left:6px
-}
-
-/* Form alanları */
-textarea{
-  width:100%; height:90px; border-radius:8px; padding:12px; border:1px solid #ccc; font-size:14px
-}
-
-input, select{
-  width:100%;
-  padding:11px 12px;
-  border-radius:10px;
-  border:1px solid #d9e2ec;
-  font-size:14px;
-  background:#fff;
-}
-
-/* Düzenleme grid */
-.edit-grid{
-  display:grid; grid-template-columns:1fr 1fr; gap:14px
-}
-.edit-grid .full-row{
-  grid-column:1 / -1
-}
-
-.edit-card{
-  background:#f9fbfd;
-  border:1px solid #d9e2ec;
-  border-radius:16px;
-  padding:18px;
-  box-shadow:0 8px 30px rgba(0,0,0,.08);
-}
-
-.edit-card__header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:14px;
-}
-
-.eyebrow{
-  margin:0;
-  font-size:12px;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  color:var(--muted);
-}
-
-.title{
-  margin:2px 0 0;
-  font-size:20px;
-  font-weight:700;
-}
-
-.pill{
-  padding:8px 12px;
-  background:rgba(60,141,13,.1);
-  color:var(--brand);
-  border:1px solid rgba(60,141,13,.2);
-  border-radius:999px;
-  font-weight:600;
-  white-space:nowrap;
-}
-
-.form-field label{
-  display:block;
-  margin-bottom:6px;
-  font-size:13px;
-  font-weight:600;
-  color:#123;
-}
-
-.input-ghost{
-  background:#f8fafc;
-  color:#1f3a52;
-  font-weight:700;
-}
-
-/* ==============================
-   ALERT & TOAST
-============================== */
-.alert-backdrop{
-  position:fixed; inset:0; background:rgba(0,0,0,.45);
-  display:flex; align-items:center; justify-content:center; z-index:600
-}
-.alert-card{
-  width:min(520px,92vw); background:#fff; border-radius:14px; padding:22px;
-  box-shadow:0 10px 30px rgba(0,0,0,.25); animation:pop .18s ease
-}
-.error-detail-card .alert-text{ margin-top:6px; }
-.error-detail-text{
-  width:100%;
-  min-height:160px;
-  border-radius:10px;
-  padding:12px;
-  border:1px solid #d9e2ec;
-  background:#f8fafc;
-  font-family:"SFMono-Regular",Consolas,Monaco,monospace;
-  white-space:pre-wrap;
-  resize:vertical;
-}
-.alert-title{ font-size:18px; font-weight:700; margin:0 0 8px; color:#12263a }
-.alert-text{ font-size:14px; color:#333; line-height:1.5 }
-.alert-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:16px }
-
-.btn-ghost{
-  background:#eef2f3; border:none; padding:10px 14px;
-  border-radius:8px; cursor:pointer; height:42px;
-}
-.btn-brand{
-  background:var(--brand); color:#fff; border:none;
-  padding:10px 14px; border-radius:8px;
-  cursor:pointer; height:42px;
-}
-
-@keyframes pop{ from{ transform:scale(.98); opacity:.6 } to{ transform:scale(1); opacity:1 } }
-
-.toast{
-  position:fixed; left:50%; transform:translateX(-50%);
-  bottom:24px; background:#12263a; color:#fff; padding:12px 16px;
-  border-radius:10px; font-size:14px; z-index:700;
-  box-shadow:0 6px 18px rgba(0,0,0,.25)
-}
-
-/* ==============================
-   LOGIN SAYFASI
-============================== */
-body.login-page{
-  height:100vh; display:flex; align-items:center; justify-content:center;
-  background:linear-gradient(135deg,#0b2e63,#1a3d7c)
-}
-.login-box{
-  width:90%; max-width:380px; background:#fff; padding:35px; border-radius:16px;
-  box-shadow:0 10px 35px rgba(0,0,0,.35); animation:fadeInLogin .3s ease; text-align:center
-}
-@keyframes fadeInLogin{ from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none} }
-.login-box .logo{ width:140px; margin:0 auto 20px }
-.login-box h2{ color:#1a3d7c; margin:0 0 20px; font-size:22px; font-weight:700 }
-.login-box .form-group{ margin-bottom:16px; text-align:left }
-.login-box label{ font-size:14px; font-weight:600; color:#1a3d7c }
-.login-box input{
-  width:100%; padding:12px; font-size:14px; border-radius:10px; border:1px solid #b8c6d9;
-  margin-top:6px; background:#f7f9fc
-}
-.login-box input:focus{
-  outline:none; border-color:#1a3d7c; background:#fff; box-shadow:0 0 0 2px rgba(23,78,166,.2)
-}
-.btn-login{
-  width:100%; padding:12px; font-size:15px; border:none; border-radius:10px;
-  background:#1a3d7c; color:#fff; cursor:pointer; margin-top:10px; transition:.2s
-}
-.btn-login:hover{ background:#153468 }
-.error{ margin-top:12px; color:#e74c3c; font-size:14px; display:none }
-
-/* ==============================
-   RAPOR SAYFASI EKLERİ
-============================== */
-canvas{ max-width:100% }
-@media (min-width:900px){
-  .content-area{ margin-left:260px!important }
-}
-
 /* ==============================
    MOBİL
 ============================== */
 @media(max-width:900px){
-  .sidebar{
-    left:-300px!important; transition:left .3s ease; z-index:999
-  }
+  .sidebar{ left:-300px!important; transition:left .3s ease; z-index:999 }
   .sidebar.open{ left:0!important }
   .mobile-menu-btn{ display:block }
   .content-area{ margin-left:0!important; padding-top:70px }
-  .edit-grid{ grid-template-columns:1fr } /* form tek kolon */
-}
-
-
-#actionButtons {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 10px;
-}
-
-#actionButtons button {
-  flex: 1;        /* Hepsi eşit genişlik */
-  min-width: 0;   /* Taşmayı önler */
-}
-
-/* Kapat butonu özel davranmasın → ESKİ KURAL SİLİNECEK */
-#actionButtons .btn-close {
-  flex-basis: auto !important;
-  order: unset !important;
-}
-
-
-/* İptal Et butonu mutlaka üst satırda */
-#actionButtons .btn-danger {
-  order: 1;
 }
