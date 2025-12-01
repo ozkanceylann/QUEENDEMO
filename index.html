@@ -6,10 +6,10 @@
 
   <title>Sipariş Sistemi</title>
 
-  <!-- ✔ FAVICON DÜZELTİLDİ -->
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png" />
 
-  <!-- ✔ CONFIG ÖNCE GELMEK ZORUNDA -->
+  <!-- CONFIG -->
   <script src="config.js"></script>
 
   <!-- CSS -->
@@ -27,11 +27,9 @@
       margin-left:6px;
     }
   </style>
-
 </head>
 
 <body>
-
   <!-- MOBİL MENÜ -->
   <div class="mobile-menu-btn" onclick="toggleMenu()">☰</div>
 
@@ -42,22 +40,23 @@
       <div id="brandTitle" class="sidebar-title"></div>
     </div>
 
-    <ul class="menu">
-      <li id="tab_bekleyen"   class="active" onclick="setTab('bekleyen')">Bekleyen</li>
-      <li id="tab_hazirlandi" onclick="setTab('hazirlandi')">Hazırlandı</li>
-      <li id="tab_kargolandi" onclick="setTab('kargolandi')">Kargolandı</li>
-      <li id="tab_tamamlandi" onclick="setTab('tamamlandi')">Tamamlananlar</li>
-      <li id="tab_sorunlu"    onclick="setTab('sorunlu')">Sorunlu</li>
-      <li id="tab_iptal"      onclick="setTab('iptal')">İptal</li>
+    <!-- YENİ: Scroll kapsayıcı (alttaki buton ekrandan taşmasın) -->
+    <div class="sidebar-scroll">
+      <ul class="menu">
+        <li id="tab_bekleyen"   class="active" onclick="setTabAndSave('bekleyen')">Bekleyen</li>
+        <li id="tab_hazirlandi" onclick="setTabAndSave('hazirlandi')">Hazırlandı</li>
+        <li id="tab_kargolandi" onclick="setTabAndSave('kargolandi')">Kargolandı</li>
+        <li id="tab_tamamlandi" onclick="setTabAndSave('tamamlandi')">Tamamlananlar</li>
+        <li id="tab_sorunlu"    onclick="setTabAndSave('sorunlu')">Sorunlu</li>
+        <li id="tab_iptal"      onclick="setTabAndSave('iptal')">İptal</li>
 
-      <!-- ✔ RAPORLAR BURADAN AÇILIYOR -->
-      <li onclick="window.location='rapor.html'">Raporlar</li>
-    </ul>
+        <!-- Raporlar -->
+        <li onclick="window.location='rapor.html'">Raporlar</li>
+      </ul>
 
-    <button class="btn-danger" onclick="logout()">Çıkış Yap</button>
+      <button class="btn-danger" onclick="logout()">Çıkış Yap</button>
+    </div>
   </aside>
-
-
 
   <!-- ANA İÇERİK -->
   <main class="content-area">
@@ -89,48 +88,35 @@
 
   </main>
 
-
-
   <!-- MODAL -->
   <div id="orderModal" class="modal">
     <div class="modal-content">
-
       <span class="close" onclick="closeModal()">&times;</span>
       <h2>Sipariş Detayı</h2>
 
       <div id="orderDetails"></div>
 
-<div id="actionButtons" class="modal-btns">
+      <div id="actionButtons" class="modal-btns">
+        <button id="btnPrepare" class="btn-primary" onclick="markPrepared()">Hazırla</button>
+        <button id="btnCargo" class="btn-secondary" onclick="sendToCargo()">Kargola</button>
+        <button id="btnWaiting" class="btn-waiting" onclick="setWaiting()">Bekliyor</button>
+        <button id="btnBarcode" class="btn-primary" style="display:none;" onclick="printBarcode()">Barkod Kes</button>
+        <button class="btn-warning" onclick="enterEditMode()">Düzenle</button>
+        <button class="btn-danger" onclick="openCancelForm()">İptal Et</button>
+        <button class="btn-close" onclick="closeModal()">Kapat</button>
+      </div>
 
-    <button id="btnPrepare" class="btn-primary" onclick="markPrepared()">Hazırla</button>
-    <button id="btnCargo" class="btn-secondary" onclick="sendToCargo()">Kargola</button>
-    <button id="btnWaiting" class="btn-waiting" onclick="setWaiting()">Bekliyor</button>
-    <button id="btnBarcode" class="btn-primary" style="display:none;" onclick="printBarcode()">Barkod Kes</button>
-
-    <button class="btn-warning" onclick="enterEditMode()">Düzenle</button>
-
-    <!-- İPTAL ET (ÜST SATIR) -->
-    <button class="btn-danger" onclick="openCancelForm()">İptal Et</button>
-
-    <!-- KAPAT (ALT SATIR) -->
-    <button class="btn-close" onclick="closeModal()">Kapat</button>
-
-</div>
-
-      <!-- Edit Butonları -->
       <div id="editButtons" class="modal-btns" style="display:none;">
         <button class="btn-secondary" onclick="saveEdit()">Kaydet</button>
         <button class="btn-danger" onclick="cancelEdit()">Vazgeç</button>
         <button class="btn-close" onclick="closeModal()">Kapat</button>
       </div>
 
-      <!-- Geri Al -->
       <div id="restoreButtons" class="modal-btns" style="display:none;">
         <button class="btn-secondary" onclick="restoreOrder()">Geri Al</button>
         <button class="btn-close" onclick="closeModal()">Kapat</button>
       </div>
 
-      <!-- İptal formu -->
       <div id="cancelForm" style="display:none;margin-top:20px;">
         <h3>İptal Nedeni</h3>
         <textarea id="iptalInput" placeholder="Neden iptal ediliyor?"></textarea>
@@ -139,32 +125,45 @@
           <button class="btn-close" onclick="cancelCancelForm()">Vazgeç</button>
         </div>
       </div>
-
     </div>
   </div>
 
   <div id="alertRoot"></div>
 
-
   <!-- SUPABASE -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- APP -->
+  <!-- APP JS -->
   <script src="app.js" type="module"></script>
 
-  <!-- LOGO & BAŞLIK & İLK YÜKLEME -->
+  <!-- BAŞLAT: Marka, Sekme Kalıcılığı, Enter ile Arama -->
   <script type="module">
-    document.addEventListener("DOMContentLoaded", async () => {
+    // Sekmeyi kaydederek çağır
+    window.setTabAndSave = (tab) => {
+      localStorage.setItem("activeTab", tab);
+      setTab(tab);
+    };
 
+    document.addEventListener("DOMContentLoaded", async () => {
       await window.waitConfig();
 
+      // Marka görselleri
       document.getElementById("brandLogo").src = CONFIG.logo;
-      document.getElementById("brandTitle").innerHTML =
-        CONFIG.brandName + "<br/>Sipariş Sistemi";
+      document.getElementById("brandTitle").innerHTML = CONFIG.brandName + "<br/>Sipariş Sistemi";
 
+      // Son kullanılan sekmeyi yükle (yenilemede orada kalsın)
+      const savedTab = localStorage.getItem("activeTab") || "bekleyen";
+      setTab(savedTab);
+
+      // İlk liste
       loadOrders(true);
+
+      // Enter ile arama
+      const input = document.getElementById("searchInput");
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") searchOrders();
+      });
     });
   </script>
-
 </body>
 </html>
