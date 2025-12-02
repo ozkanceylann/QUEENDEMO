@@ -54,7 +54,7 @@ body{
 .menu li.active{ background:var(--brand)!important; font-weight:700 }
 
 .btn-danger{
-  width:100%; margin-top:auto; padding:12px; font-size:15px;
+  width:100%; margin-top:auto; padding:10px; font-size:14px;
   background:var(--danger); color:#fff; border:none; border-radius:8px; cursor:pointer
 }
 .btn-danger:hover{ background:#c9302c }
