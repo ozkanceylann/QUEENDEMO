@@ -213,58 +213,39 @@ async function restoreOrder(){
 let editBackup = null;
 
 async function loadCitiesAndDistricts(order){
-  let { data: cities } = await db.from("sehir").select("*").order("ad", { ascending:true });
+  let { data: cities } = await db
+    .from("sehir")
+    .select("*")
+    .order("ad", { ascending:true });
+
   const sel = document.getElementById("e_sehir");
   sel.innerHTML = `<option value="">Seçiniz</option>`;
 
   cities.forEach(c=>{
-    const opt=document.createElement("option");
+    const opt = document.createElement("option");
     opt.value = c.id;
     opt.textContent = c.ad;
-    if(c.ad === order.sehir) opt.selected=true;
+
+    // ✔ DOĞRU EŞLEŞME (KOD ÜZERİNDEN)
+    if (String(c.code) === String(order.sehir_kodu)) {
+      opt.selected = true;
+      document.getElementById("e_sehir_kodu").value = c.code;
+    }
+
     sel.appendChild(opt);
   });
 
-  sel.addEventListener("change", loadDistricts);
+  sel.addEventListener("change", () => {
+    const found = cities.find(x => x.id == sel.value);
+    if(found){
+      document.getElementById("e_sehir_kodu").value = found.code;
+    }
+    loadDistricts();
+  });
 
   await loadDistricts();
 }
 
-async function loadDistricts(){
-  const cityId = document.getElementById("e_sehir").value;
-  const order = editBackup;
-
-  const ilceSel = document.getElementById("e_ilce");
-
-  if(!cityId){
-    ilceSel.innerHTML = `<option value="">İlçe seçiniz</option>`;
-    return;
-  }
-
-  let { data: districts } = await db.from("ilce").select("*").eq("sehir_id", cityId).order("ad",{ascending:true});
-
-  ilceSel.innerHTML = `<option value="">Seçiniz</option>`;
-
-  districts.forEach(d=>{
-    const opt=document.createElement("option");
-    opt.value=d.id;
-    opt.textContent=d.ad;
-    if(d.ad === order.ilce) opt.selected=true;
-    ilceSel.appendChild(opt);
-  });
-
-  ilceSel.addEventListener("change", ()=>{
-    const selected = districts.find(x=>x.id==ilceSel.value);
-    if(selected){
-      document.getElementById("e_ilce_kodu").value = selected.code;
-    }
-  });
-
-  const selected = districts.find(x=>x.ad === order.ilce);
-  if(selected){
-    document.getElementById("e_ilce_kodu").value = selected.code;
-  }
-}
 
 /* ============================================================
    EDIT MODE
