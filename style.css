@@ -175,7 +175,13 @@ body{
 .modal h2{ margin:0 0 10px; color:var(--brand); font-size:22px }
 .close{ float:right; font-size:26px; cursor:pointer; color:#666 }
 
-.modal-btns{ margin-top:18px; display:flex; gap:10px; flex-wrap:wrap }
+.modal-btns{
+  margin-top:auto;     /* ✔ kartın en altına it */
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
 .modal-btns button{ min-width:120px }
 
 /* BUTTONS - YENİ DÜZENLİ QUEEN STİLİ */
