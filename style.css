@@ -28,25 +28,25 @@ body{
    SIDEBAR & MOBİL MENÜ
 ============================== */
 .sidebar{
-  width:260px; height:100vh;
+  width:220px; height:100vh;
   position:fixed; left:0; top:0; z-index:999;
   background:var(--sidebar); color:#fff;
   padding:25px 15px; display:flex; flex-direction:column;
   box-shadow:3px 0 12px rgba(0,0,0,.25);
 }
 .sidebar-header{ text-align:center; padding:10px 0 20px }
-.sidebar-logo{ width:130px; height:auto; display:block; margin:0 auto 8px }
+.sidebar-logo{ width:110px; height:auto; display:block; margin:0 auto 8px }
 .sidebar-title{ font-size:18px; font-weight:700; line-height:1.2 }
 
 .menu{ list-style:none; padding:0; margin:35px 0 0 }
 .menu li{
   background:var(--sidebar-2);
-  padding:10px;          /* ✔ küçültüldü */
+  padding:8px 6px;          /* ✔ küçültüldü */
   margin-bottom:10px;    /* ✔ küçültüldü */
   text-align:center;
   border-radius:8px;
   cursor:pointer;
-  font-size:14px;        /* ✔ küçültüldü */
+  font-size:12px;        /* ✔ küçültüldü */
   transition:.2s;
 }
 
@@ -68,7 +68,7 @@ body{
 /* ==============================
    ANA İÇERİK & ÜST BAR
 ============================== */
-.content-area{ margin-left:260px; padding:25px; transition:.3s }
+.content-area{ margin-left:220px; padding:25px; transition:.3s }
 .top-bar{ display:flex; gap:10px; margin-bottom:20px }
 .top-bar input{
   flex:1; padding:12px; font-size:15px; border-radius:8px; border:1px solid #ccc; background:#fff
