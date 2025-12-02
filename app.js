@@ -934,6 +934,22 @@ function printSiparis(order){
     if(inject() || tries>40) clearInterval(t);
   }, 100);
 }
+/* ============================================================
+   ENNTER İLE ARA 
+============================================================ */
+
+// ENTER ile arama
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("searchInput");
+  if (!input) return;
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();   // Sayfanın yenilenmesini engeller
+      searchOrders();       // 🔥 Aramayı tetikler
+    }
+  });
+});
 
 /* ============================================================
    GLOBAL EXPORT
