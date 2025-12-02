@@ -829,14 +829,20 @@ async function searchOrders(){
   const q = document.getElementById("searchInput").value.trim();
   if(!q) return loadOrders(true);
 
-  const { data } = await db.from(TABLE).select("*").or(`
+  const query = `
     siparis_no.eq.${q},
     ad_soyad.ilike.%${q}%,
     siparis_tel.ilike.%${q}%,
     musteri_tel.ilike.%${q}%,
     adres.ilike.%${q}%,
     kargo_takip_kodu.ilike.%${q}%
-  `);
+  `.replace(/\s+/g, "");  // 🔥 çok satırı tek satıra indirir
+
+  const { data, error } = await db
+    .from(TABLE)
+    .select("*")
+    .or(query);
+
   renderTable(data, { append:false, hasMore:false });
 }
 
