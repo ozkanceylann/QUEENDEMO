@@ -146,31 +146,121 @@ body{
 }
 
 /* === Sipariş Detayı Modal / DAR ve UZUN Tasarım === */
-.modal-content {
-  width: 550px !important;          /* DAR modal (eski kare görünüm kalkar) */
-  max-height: 92vh !important;      /* ekranın %92’sine kadar yükseklik */
-  min-height: 700px !important;     /* daha uzun görünmesi için minimum boy */
-  
-  overflow-y: auto !important;      /* içerik taşarsa kaydırma */
-  background: #fff;
-  
-  margin: 40px auto;
-  padding: 28px;
-  border-radius: 18px;
-
-  box-shadow: 0 12px 40px rgba(0,0,0,.25);
-
-  transform: scale(0.96);           /* hafif küçült → premium görünüm */
-  transform-origin: top center;
+/* =========================================
+   GLASSMODAL — PROFESYONEL SİPARİŞ DETAYI
+========================================= */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  backdrop-filter: blur(6px) brightness(0.55);
+  background: rgba(0,0,0,0.45);
 }
 
+/* Premium cam efektli modal kutusu */
+.modal-content {
+  width: 620px !important;
+  max-height: 88vh !important;
+  padding: 30px;
+  border-radius: 22px;
 
-@keyframes fadeIn{ from{opacity:0; transform:translateY(-8px)} to{opacity:1; transform:none} }
-.modal h2{ margin:0 0 10px; color:var(--brand); font-size:22px }
-.close{ float:right; font-size:26px; cursor:pointer; color:#666 }
+  /* 🔥 GLASS EFFECT */
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
 
-.modal-btns{ margin-top:18px; display:flex; gap:10px; flex-wrap:wrap }
-.modal-btns button{ min-width:120px }
+  border: 1px solid rgba(255,255,255,0.35);
+
+  /* Premium gölge */
+  box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+
+  /* Animasyon */
+  animation: glassPop .35s ease;
+}
+
+@keyframes glassPop {
+  from { transform: translateY(-12px) scale(.96); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Başlık daha modern */
+.modal-content h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 20px;
+  color: #fff; /* Cam modunda beyaz daha iyi */
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* Sağ üst çarpı */
+.close{
+  float:right;
+  font-size:28px;
+  cursor:pointer;
+  color:#fff;
+  opacity:0.8;
+  transition:0.2s;
+}
+.close:hover{
+  opacity:1;
+}
+
+/* Detay metinleri */
+#orderDetails p {
+  margin: 8px 0;
+  font-size: 15px;
+  color: #f5f5f5; 
+  text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+}
+#orderDetails b {
+  color: #fff;
+}
+
+/* Buton alanı */
+.modal-btns{
+  margin-top:20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+/* Cam üzeri buton stili */
+.modal-btns button{
+  border:none;
+  border-radius:10px;
+  padding:12px;
+  font-size:15px;
+  cursor:pointer;
+  transition:0.2s;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  backdrop-filter: blur(6px);
+}
+
+.modal-btns .btn-primary{
+  background:rgba(60,141,13,0.85);
+  color:#fff;
+}
+.modal-btns .btn-secondary{
+  background:rgba(13,110,253,0.85);
+  color:#fff;
+}
+.modal-btns .btn-warning{
+  background:rgba(255,193,7,0.85);
+  color:#222;
+}
+.modal-btns .btn-danger{
+  background:rgba(220,53,69,0.85);
+  color:#fff;
+}
+.modal-btns .btn-close{
+  background:rgba(255,255,255,0.5);
+  color:#222;
+}
+.modal-btns button:hover{
+  filter:brightness(.95);
+}
+
 
 /* BUTTONS - YENİ DÜZENLİ QUEEN STİLİ */
 .btn-primary,
