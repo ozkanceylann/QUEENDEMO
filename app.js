@@ -126,8 +126,8 @@ async function loadOrders(reset=false){
   if(currentTab==="bekleyen")   q = q.eq("kargo_durumu","Bekliyor");
   if(currentTab==="hazirlandi") q = q.eq("kargo_durumu","Hazırlandı");
   if(currentTab==="kargolandi") q = q.eq("kargo_durumu","Kargolandı");
-  if(currentTab==="tamamlandi") q = q.eq("kargo_durumu","Tamamlandı");
-  if(currentTab==="sorunlu")    q = q.eq("kargo_durumu","Sorunlu");
+  if(currentTab==="tamamlandi") q=q.eq("shipmentStatusCode",5);
+  if(currentTab==="sorunlu")    q=q.in("shipmentStatusCode",[6,7]); // 6: sorunlu, 7: iade
   if(currentTab==="iptal")      q = q.eq("kargo_durumu","İptal");
 
   const start = (currentPage - 1) * PAGE_SIZE;
