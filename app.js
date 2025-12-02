@@ -951,6 +951,20 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// Modalı dışarı tıklayınca kapat
+document.addEventListener("click", function(e) {
+  const modal = document.getElementById("orderModal");
+  const content = document.querySelector(".modal-content");
+
+  // Modal açık değilse çık
+  if (!modal || modal.style.display !== "flex") return;
+
+  // İçeriğe tıklanmadıysa kapat
+  if (!content.contains(e.target)) {
+    closeModal();
+  }
+});
+
 /* ============================================================
    GLOBAL EXPORT
 ============================================================ */
