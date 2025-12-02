@@ -55,7 +55,7 @@ async function loadOrders(reset=false){
   if(currentTab==="hazirlandi") q=q.eq("kargo_durumu","Hazırlandı");
   if(currentTab==="kargolandi") q=q.eq("kargo_durumu","Kargolandı");
   if(currentTab==="iptal")      q=q.eq("kargo_durumu","İptal");
-  if(currentTab==="sorunlu")    q=q.in("shipmentStatusCode",[6,7]); // 6: sorunlu, 7: iade
+  if(currentTab==="sorunlu")    q=q.in("shipmentStatusCode",[6,7]);
   if(currentTab==="tamamlandi") q=q.eq("shipmentStatusCode",5);
 
   const start=(currentPage-1)*PAGE_SIZE, end=start+PAGE_SIZE-1;
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   if(input) input.addEventListener("keydown", e=>{ if(e.key==="Enter") searchOrders(); });
 });
 
-/* ==================== DETAILS & BUTTON VISIBILITY ==================== */
+/* ==================== DETAILS ==================== */
 async function openOrder(id){
   const { data } = await db.from(TABLE).select("*").eq("siparis_no", id).single();
   if(!data) return toast("Sipariş bulunamadı");
@@ -137,13 +137,11 @@ function renderDetails(){
     <p><b>Durum:</b> ${d.kargo_durumu ?? d.shipmentStatus ?? "-"}</p>
   `;
 
-  // Reset groups
   document.getElementById("actionButtons").style.display="flex";
   document.getElementById("editButtons").style.display="none";
   document.getElementById("restoreButtons").style.display="none";
   document.getElementById("cancelForm").style.display="none";
 
-  // Button visibility by status
   const st = d.kargo_durumu || "";
   const btnPrepare = document.getElementById("btnPrepare");
   const btnCargo   = document.getElementById("btnCargo");
@@ -152,7 +150,6 @@ function renderDetails(){
   const btnEdit    = document.querySelector("#actionButtons .btn-warning");
   const btnCancel  = document.querySelector("#actionButtons .btn-danger");
 
-  // default
   [btnPrepare,btnCargo,btnWaiting,btnBarcode,btnEdit,btnCancel].forEach(b=>{ if(b) b.style.display="inline-block"; });
 
   if(st==="Bekliyor"){
@@ -168,7 +165,6 @@ function renderDetails(){
     btnWaiting.style.display="none";
     btnEdit.style.display="none";
     btnCancel.style.display="none";
-    // sadece barkod
   }else if(st==="Tamamlandı"){
     document.getElementById("actionButtons").style.display="none";
   }else if(st==="İptal"){
@@ -211,6 +207,218 @@ async function restoreOrder(){
   toast("Geri alındı"); closeModal(); loadOrders(true);
 }
 
+/* ============================================================
+   ŞEHİR — İLÇE (Supabase)
+============================================================ */
+let editBackup = null;
+
+async function loadCitiesAndDistricts(order){
+  let { data: cities } = await db.from("sehir").select("*").order("ad", { ascending:true });
+  const sel = document.getElementById("e_sehir");
+  sel.innerHTML = `<option value="">Seçiniz</option>`;
+
+  cities.forEach(c=>{
+    const opt=document.createElement("option");
+    opt.value = c.id;
+    opt.textContent = c.ad;
+    if(c.ad === order.sehir) opt.selected=true;
+    sel.appendChild(opt);
+  });
+
+  sel.addEventListener("change", loadDistricts);
+
+  await loadDistricts();
+}
+
+async function loadDistricts(){
+  const cityId = document.getElementById("e_sehir").value;
+  const order = editBackup;
+
+  const ilceSel = document.getElementById("e_ilce");
+
+  if(!cityId){
+    ilceSel.innerHTML = `<option value="">İlçe seçiniz</option>`;
+    return;
+  }
+
+  let { data: districts } = await db.from("ilce").select("*").eq("sehir_id", cityId).order("ad",{ascending:true});
+
+  ilceSel.innerHTML = `<option value="">Seçiniz</option>`;
+
+  districts.forEach(d=>{
+    const opt=document.createElement("option");
+    opt.value=d.id;
+    opt.textContent=d.ad;
+    if(d.ad === order.ilce) opt.selected=true;
+    ilceSel.appendChild(opt);
+  });
+
+  ilceSel.addEventListener("change", ()=>{
+    const selected = districts.find(x=>x.id==ilceSel.value);
+    if(selected){
+      document.getElementById("e_ilce_kodu").value = selected.code;
+    }
+  });
+
+  const selected = districts.find(x=>x.ad === order.ilce);
+  if(selected){
+    document.getElementById("e_ilce_kodu").value = selected.code;
+  }
+}
+
+/* ============================================================
+   EDIT MODE
+============================================================ */
+async function enterEditMode(){
+  if(!selectedOrder) return;
+
+  const d = selectedOrder;
+
+  editBackup = JSON.parse(JSON.stringify(d));
+
+  document.getElementById("actionButtons").style.display="none";
+  document.getElementById("editButtons").style.display="flex";
+
+  document.getElementById("orderDetails").innerHTML = `
+    <div class="edit-card">
+      <div class="edit-card__header">
+        <div>
+          <p class="eyebrow">SİPARİŞ NO</p>
+          <h3 class="title">${d.siparis_no}</h3>
+        </div>
+        <span class="pill">Durum: ${d.kargo_durumu ?? d.shipmentStatus ?? "-"}</span>
+      </div>
+
+      <div class="edit-grid">
+
+        <div>
+          <div class="form-field"><label>Ad Soyad</label>
+            <input id="e_ad_soyad" value="${d.ad_soyad || ""}">
+          </div>
+        </div>
+
+        <div>
+          <div class="form-field"><label>Sipariş Alan (değiştirilemez)</label>
+            <input id="e_siparis_alan" class="input-ghost" value="${d.siparis_alan||""}" readonly>
+          </div>
+        </div>
+
+        <div>
+          <div class="form-field"><label>Sipariş Tel</label>
+            <input id="e_siparis_tel" value="${d.siparis_tel||""}">
+          </div>
+        </div>
+
+        <div>
+          <div class="form-field"><label>Müşteri Tel</label>
+            <input id="e_musteri_tel" value="${d.musteri_tel||""}">
+          </div>
+        </div>
+
+        <div class="full-row">
+          <div class="form-field"><label>Adres</label>
+            <textarea id="e_adres">${d.adres||""}</textarea>
+          </div>
+        </div>
+
+        <div>
+          <div class="form-field"><label>Şehir</label>
+            <select id="e_sehir"></select>
+          </div>
+        </div>
+
+        <div>
+          <div class="form-field"><label>İlçe</label>
+            <select id="e_ilce"></select>
+          </div>
+        </div>
+
+        <div>
+          <div class="form-field"><label>Şehir Kodu</label>
+            <input id="e_sehir_kodu" value="${d.sehir_kodu||""}" readonly>
+          </div>
+        </div>
+
+        <div>
+          <div class="form-field"><label>İlçe Kodu</label>
+            <input id="e_ilce_kodu" value="${d.ilce_kodu||""}" readonly>
+          </div>
+        </div>
+
+        <div>
+          <div class="form-field"><label>Kargo Adet</label>
+            <input id="e_kargo_adet" value="${d.kargo_adet||""}">
+          </div>
+        </div>
+
+        <div>
+          <div class="form-field"><label>Kargo KG</label>
+            <input id="e_kargo_kg" value="${d.kargo_kg||""}">
+          </div>
+        </div>
+
+        <div class="full-row">
+          <div class="form-field"><label>Ürün</label>
+            <textarea id="e_urun_bilgisi">${d.urun_bilgisi||""}</textarea>
+          </div>
+        </div>
+
+        <div>
+          <div class="form-field"><label>Tutar</label>
+            <input id="e_toplam_tutar" value="${d.toplam_tutar||""}">
+          </div>
+        </div>
+
+        <div>
+          <div class="form-field"><label>Ödeme</label>
+            <input id="e_odeme" value="${d.odeme||""}">
+          </div>
+        </div>
+
+        <div class="full-row">
+          <div class="form-field"><label>Not</label>
+            <textarea id="e_not">${d.not||""}</textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
+
+  await loadCitiesAndDistricts(d);
+}
+
+async function saveEdit(){
+  const up = {
+    ad_soyad: document.getElementById("e_ad_soyad").value.trim(),
+    siparis_tel: document.getElementById("e_siparis_tel").value.trim(),
+    musteri_tel: document.getElementById("e_musteri_tel").value.trim(),
+    adres: document.getElementById("e_adres").value.trim(),
+    sehir: document.getElementById("e_sehir").selectedOptions[0]?.textContent || "",
+    sehir_kodu: document.getElementById("e_sehir_kodu").value.trim(),
+    ilce: document.getElementById("e_ilce").selectedOptions[0]?.textContent || "",
+    ilce_kodu: document.getElementById("e_ilce_kodu").value.trim(),
+    kargo_adet: document.getElementById("e_kargo_adet").value.trim(),
+    kargo_kg: document.getElementById("e_kargo_kg").value.trim(),
+    urun_bilgisi: document.getElementById("e_urun_bilgisi").value.trim(),
+    toplam_tutar: Number(document.getElementById("e_toplam_tutar").value),
+    odeme: document.getElementById("e_odeme").value.trim(),
+    not: document.getElementById("e_not").value.trim()
+  };
+
+  await db.from(TABLE).update(up).eq("siparis_no", selectedOrder.siparis_no);
+
+  toast("Kaydedildi");
+  closeModal();
+  loadOrders(true);
+}
+
+function cancelEdit(){
+  selectedOrder = editBackup;
+  editBackup = null;
+  renderDetails();
+}
+
 /* ==================== TAB & INIT ==================== */
 function setTab(tab){
   currentTab = tab;
@@ -223,14 +431,15 @@ function setTab(tab){
 document.addEventListener("DOMContentLoaded", ()=>{
   const saved = localStorage.getItem("activeTab") || "bekleyen";
   setTab(saved);
-  // Modal dış tık kapatma
   document.addEventListener("click", (e)=>{
     const modal = document.getElementById("orderModal");
     const content = document.querySelector(".modal-content");
-    if(modal && modal.style.display==="flex" && content && !content.contains(e.target)) modal.style.display="none";
+    if(modal && modal.style.display==="flex" && content && !content.contains(e.target))
+      modal.style.display="none";
   });
 });
 
+/* ==================== EXPORT ==================== */
 window.searchOrders = searchOrders;
 window.clearSearch = clearSearch;
 window.loadMore = loadMore;
@@ -245,4 +454,9 @@ window.openCancelForm = openCancelForm;
 window.cancelCancelForm = cancelCancelForm;
 window.confirmCancel = confirmCancel;
 window.restoreOrder = restoreOrder;
+
+window.enterEditMode = enterEditMode;
+window.saveEdit = saveEdit;
+window.cancelEdit = cancelEdit;
+
 window.openTrackingUrl = (url)=>{ if(url) window.open(url,"_blank"); else toast("Link yok"); };
