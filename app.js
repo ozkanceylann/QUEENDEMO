@@ -825,26 +825,39 @@ async function restoreOrder(){
 /* ============================================================
    ARAMA
 ============================================================ */
-async function searchOrders(){
-  const q = document.getElementById("searchInput").value.trim();
-  if(!q) return loadOrders(true);
+async function searchOrders() {
+  const qRaw = document.getElementById("searchInput").value.trim();
+  if (!qRaw) return loadOrders(true);
 
-  const query = `
-    siparis_no.eq.${q},
-    ad_soyad.ilike.%${q}%,
-    siparis_tel.ilike.%${q}%,
-    musteri_tel.ilike.%${q}%,
-    adres.ilike.%${q}%,
-    kargo_takip_kodu.ilike.%${q}%
-  `.replace(/\s+/g, "");  // 🔥 çok satırı tek satıra indirir
+  // TÜRKÇE KARAKTER TEMİZLİĞİ + LOWERCASE
+  const q = qRaw
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // aksan temizleme: ö→o, ç→c
+
+  // Supabase V2 için OR query TEK SATIR olmalı!
+  const orQuery = [
+    `siparis_no.eq.${qRaw}`,         // sipariş no sayı olduğu için raw kullanılacak
+    `ad_soyad.ilike.%${q}%`,
+    `siparis_tel.ilike.%${q}%`,
+    `musteri_tel.ilike.%${q}%`,
+    `adres.ilike.%${q}%`,
+    `kargo_takip_kodu.ilike.%${q}%`
+  ].join(",");
 
   const { data, error } = await db
     .from(TABLE)
     .select("*")
-    .or(query);
+    .or(orQuery);
 
-  renderTable(data, { append:false, hasMore:false });
+  if (error) {
+    console.error("Arama Hatası:", error);
+    toast("Arama yapılırken bir hata oluştu!");
+    return;
+  }
+
+  renderTable(data, { append: false, hasMore: false });
 }
+
 
 function clearSearch(){
   document.getElementById("searchInput").value="";
