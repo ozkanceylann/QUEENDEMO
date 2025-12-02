@@ -922,6 +922,7 @@ function printSiparis(order){
 Object.assign(window, {
   logout,
   loadOrders,
+   loadMore,
   setTab,
   searchOrders,
   clearSearch,
