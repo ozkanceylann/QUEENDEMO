@@ -6,14 +6,13 @@
 
   <title>Sipariş Sistemi</title>
 
-  <!-- ✔ FAVICON DÜZELTİLDİ -->
-  <link rel="icon" type="image/png" href="favicon.png" />
-
-  <!-- ✔ CONFIG ÖNCE GELMEK ZORUNDA -->
+  <!-- CONFIG -->
   <script src="config.js"></script>
 
   <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
+
+  <link rel="icon" type="image/png" href="favicon.png" />
 
   <style>
     .btn-mini{
@@ -27,12 +26,11 @@
       margin-left:6px;
     }
   </style>
-
 </head>
 
 <body>
 
-  <!-- MOBİL MENÜ -->
+  <!-- MOBILE MENU -->
   <div class="mobile-menu-btn" onclick="toggleMenu()">☰</div>
 
   <!-- SIDEBAR -->
@@ -50,17 +48,13 @@
       <li id="tab_sorunlu"    onclick="setTab('sorunlu')">Sorunlu</li>
       <li id="tab_iptal"      onclick="setTab('iptal')">İptal</li>
 
-
-      <!-- ✔ RAPORLAR BURADAN AÇILIYOR -->
       <li onclick="window.location='rapor.html'">Raporlar</li>
     </ul>
 
     <button class="btn-danger" onclick="logout()">Çıkış Yap</button>
   </aside>
 
-
-
-  <!-- ANA İÇERİK -->
+  <!-- MAIN -->
   <main class="content-area">
 
     <div class="top-bar">
@@ -87,10 +81,7 @@
     </div>
 
     <button id="loadMoreBtn" class="btn-load-more" onclick="loadMore()">Daha Fazla</button>
-
   </main>
-
-
 
   <!-- MODAL -->
   <div id="orderModal" class="modal">
@@ -101,24 +92,19 @@
 
       <div id="orderDetails"></div>
 
-<div id="actionButtons" class="modal-btns">
+      <!-- Normal Eylem Butonları -->
+      <div id="actionButtons" class="modal-btns">
+        <button id="btnPrepare" class="btn-primary" onclick="markPrepared()">Hazırla</button>
+        <button id="btnCargo"   class="btn-secondary" onclick="sendToCargo()">Kargola</button>
+        <button id="btnWaiting" class="btn-waiting" onclick="setWaiting()">Bekliyor</button>
+        <button id="btnBarcode" class="btn-primary" style="display:none;" onclick="printBarcode()">Barkod Kes</button>
 
-    <button id="btnPrepare" class="btn-primary" onclick="markPrepared()">Hazırla</button>
-    <button id="btnCargo" class="btn-secondary" onclick="sendToCargo()">Kargola</button>
-    <button id="btnWaiting" class="btn-waiting" onclick="setWaiting()">Bekliyor</button>
-    <button id="btnBarcode" class="btn-primary" style="display:none;" onclick="printBarcode()">Barkod Kes</button>
+        <button class="btn-warning" onclick="enterEditMode()">Düzenle</button>
+        <button class="btn-danger" onclick="openCancelForm()">İptal Et</button>
+        <button class="btn-close" onclick="closeModal()">Kapat</button>
+      </div>
 
-    <button class="btn-warning" onclick="enterEditMode()">Düzenle</button>
-
-    <!-- İPTAL ET (ÜST SATIR) -->
-    <button class="btn-danger" onclick="openCancelForm()">İptal Et</button>
-
-    <!-- KAPAT (ALT SATIR) -->
-    <button class="btn-close" onclick="closeModal()">Kapat</button>
-
-</div>
-
-      <!-- Edit Butonları -->
+      <!-- Düzenleme Butonları -->
       <div id="editButtons" class="modal-btns" style="display:none;">
         <button class="btn-secondary" onclick="saveEdit()">Kaydet</button>
         <button class="btn-danger" onclick="cancelEdit()">Vazgeç</button>
@@ -146,19 +132,15 @@
 
   <div id="alertRoot"></div>
 
-
   <!-- SUPABASE -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- APP -->
   <script src="app.js" type="module"></script>
 
-  <!-- LOGO & BAŞLIK & İLK YÜKLEME -->
   <script type="module">
     document.addEventListener("DOMContentLoaded", async () => {
-
       await window.waitConfig();
-
       document.getElementById("brandLogo").src = CONFIG.logo;
       document.getElementById("brandTitle").innerHTML =
         CONFIG.brandName + "<br/>Sipariş Sistemi";
