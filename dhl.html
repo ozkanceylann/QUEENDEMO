@@ -155,21 +155,21 @@ async function loadIntegrationSettings(){
     .maybeSingle();
   if(error){ console.warn('integration error', error); return; }
   if(!data) return;
-  client_id = data.client_id; client_secret = data.client_secret;
-  token_url = data.token_url; shipment_url = data.shipment_url; api_version = data.api_version || '1.0';
+  client_id = data["X-IBM-Client-Id"]; client_secret = data["X-IBM-Client-Secret"];
+  token_url = data.token_url; shipment_url = data.shipment_url; api_version = data["x-api-version"] || '1.0';
 }
 
 async function loadFirmAccount(){
   if(!BRAND) return;
   const { data, error } = await db
     .from('dhl_firma_hesaplari')
-    .select('musteri_no, sifre, son_token, son_token_expire')
+    .select('customerNumber, password, son_token, son_token_expire')
     .eq('firma_adi', BRAND)
     .maybeSingle();
   if(error){ console.warn('firma hesap error', error); return; }
   if(!data) return;
-  document.getElementById('kullanici').value = data.musteri_no || '';
-  document.getElementById('sifre').value = data.sifre || '';
+  document.getElementById('kullanici').value = data.customerNumber || '';
+  document.getElementById('sifre').value = data.password || '';
   if(data.son_token && data.son_token_expire){
     activeToken = data.son_token;
     tokenExpireAt = data.son_token_expire;
@@ -237,7 +237,7 @@ async function handleLogin(){
       // Supabase'e kaydet
       if(BRAND){
         await db.from('dhl_firma_hesaplari')
-          .update({ musteri_no: musteri, sifre: sifre, son_token: activeToken, son_token_expire: tokenExpireAt })
+          .update({ customerNumber: musteri, password: sifre, son_token: activeToken, son_token_expire: tokenExpireAt })
           .eq('firma_adi', BRAND);
       }
       // LocalStorage
