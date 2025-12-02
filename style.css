@@ -40,10 +40,16 @@ body{
 
 .menu{ list-style:none; padding:0; margin:35px 0 0 }
 .menu li{
-  background:var(--sidebar-2); padding:13px; margin-bottom:12px;
-  text-align:center; border-radius:8px; cursor:pointer; font-size:16px;
-  transition:.2s
+  background:var(--sidebar-2);
+  padding:10px;          /* ✔ küçültüldü */
+  margin-bottom:10px;    /* ✔ küçültüldü */
+  text-align:center;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;        /* ✔ küçültüldü */
+  transition:.2s;
 }
+
 .menu li:hover{ background:#24445f }
 .menu li.active{ background:var(--brand)!important; font-weight:700 }
 
@@ -149,7 +155,7 @@ body{
 .modal-content {
   width: 550px !important;          /* DAR modal (eski kare görünüm kalkar) */
   max-height: 92vh !important;      /* ekranın %92’sine kadar yükseklik */
-  min-height: 700px !important;     /* daha uzun görünmesi için minimum boy */
+  min-height: 500px !important;     /* daha uzun görünmesi için minimum boy */
   
   overflow-y: auto !important;      /* içerik taşarsa kaydırma */
   background: #fff;
