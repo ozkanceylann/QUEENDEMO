@@ -444,4 +444,42 @@ canvas{ max-width:100% }
   border-radius: 20px;
 }
 
+/* ============================
+   ORDER LIST KART TASARIMI
+============================ */
+.orders-table tbody tr {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  margin-bottom: 12px;
+  display: block;
+  border: 1px solid #e6ecf1;
+  transition: .15s ease;
+  padding: 6px 10px;
+}
+
+.orders-table tbody tr:hover {
+  background: #f4f8fb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+}
+
+/* Tablo hücrelerini kart düzenine uygun hale getir */
+.orders-table td {
+  display: flex;
+  padding: 6px 8px;
+  font-size: 13px;
+  border: none !important;
+}
+
+/* Başlık satırı sabit kalsın */
+.orders-table thead tr {
+  display: table-row;
+}
+
+.orders-table {
+  border-collapse: separate !important;
+  border-spacing: 0 12px !important; /* satırlar arasında boşluk */
+}
+
 
