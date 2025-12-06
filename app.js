@@ -814,11 +814,11 @@ async function openCancelForm() {
     isShipped = Number.isInteger(num) && num >= 1 && num <= 9;
   }
 
-  // 🚨 Eğer kargolanmışsa → önce uyarı göster, form açma!
+  // 🚨 Kargolanmışsa → daha form açılmadan uyarı ver!
   if (isShipped) {
     const ok = await confirmModal({
       title: "Kargolanmış Siparişi İptal Et",
-      text: `Bu sipariş kargo firmasına gönderilmiş durumda.
+      text: `Bu sipariş kargoya gönderilmiş durumda.
 İptal sonucu ek ücret çıkabilir.
 
 Devam etmek istiyor musunuz?`,
@@ -826,13 +826,14 @@ Devam etmek istiyor musunuz?`,
       cancelText: "Vazgeç"
     });
 
-    if (!ok) return; // vazgeçti
+    if (!ok) return; // vazgeçerse form açma
   }
 
-  // 🟢 Uyarı yoksa veya kullanıcı onayladıysa → Formu aç
+  // 🟢 Kargolanmamışsa veya onay verildiyse → formu aç
   document.getElementById("cancelForm").style.display = "block";
   document.getElementById("actionButtons").style.display = "none";
 }
+
 
 
 /* ============================================================
