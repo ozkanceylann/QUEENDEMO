@@ -796,14 +796,36 @@ async function printBarcode(){
 /* ============================================================
    İPTAL / GERİ AL
 ============================================================ */
-function openCancelForm(){
+async function openCancelForm() {
+
+  const codeRaw = selectedOrder?.shipmentStatusCode;
+  let isShipped = false;
+
+  if (codeRaw === null || codeRaw === undefined || codeRaw === "" || codeRaw === "0") {
+    isShipped = false;
+  } else {
+    const num = Number(codeRaw);
+    isShipped = Number.isInteger(num) && num >= 1 && num <= 9;
+  }
+
+  // 🚨 Eğer kargolanmışsa → önce uyarı göster, form açma!
+  if (isShipped) {
+    const ok = await confirmModal({
+      title: "Kargolanmış Siparişi İptal Et",
+      text: `Bu sipariş kargo firmasına gönderilmiş durumda.
+İptal sonucu ek ücret çıkabilir.
+
+Devam etmek istiyor musunuz?`,
+      confirmText: "Devam Et",
+      cancelText: "Vazgeç"
+    });
+
+    if (!ok) return; // vazgeçti
+  }
+
+  // 🟢 Uyarı yoksa veya kullanıcı onayladıysa → Formu aç
   document.getElementById("cancelForm").style.display = "block";
   document.getElementById("actionButtons").style.display = "none";
-}
-
-function cancelCancelForm(){
-  document.getElementById("cancelForm").style.display = "none";
-  document.getElementById("actionButtons").style.display = "flex";
 }
 
 
