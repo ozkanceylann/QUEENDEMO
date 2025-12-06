@@ -797,35 +797,40 @@ async function printBarcode(){
    İPTAL / GERİ AL
 ============================================================ */
 async function openCancelForm() {
+  try {
+    const codeRaw = selectedOrder?.shipmentStatusCode;
+    let isShipped = false;
 
-  const codeRaw = selectedOrder?.shipmentStatusCode;
-  let isShipped = false;
+    if (codeRaw === null || codeRaw === undefined || codeRaw === "" || codeRaw === "0") {
+      isShipped = false;
+    } else {
+      const num = Number(codeRaw);
+      isShipped = Number.isInteger(num) && num >= 1 && num <= 9;
+    }
 
-  if (codeRaw === null || codeRaw === undefined || codeRaw === "" || codeRaw === "0") {
-    isShipped = false;
-  } else {
-    const num = Number(codeRaw);
-    isShipped = Number.isInteger(num) && num >= 1 && num <= 9;
-  }
-
-  // 🚨 Eğer kargolanmışsa → önce uyarı göster, form açma!
-  if (isShipped) {
-    const ok = await confirmModal({
-      title: "Kargolanmış Siparişi İptal Et",
-      text: `Bu sipariş kargo firmasına gönderilmiş durumda.
+    // 🚨 Kargolanmışsa → önce uyarı çıkacak
+    if (isShipped) {
+      const ok = await confirmModal({
+        title: "Kargolanmış Siparişi İptal Et",
+        text: `Bu sipariş kargoya gönderilmiş durumda.
 İptal sonucu ek ücret çıkabilir.
 
 Devam etmek istiyor musunuz?`,
-      confirmText: "Devam Et",
-      cancelText: "Vazgeç"
-    });
+        confirmText: "Devam Et",
+        cancelText: "Vazgeç"
+      });
 
-    if (!ok) return; // vazgeçti
+      if (!ok) return; // kullanıcı vazgeçti → form açma
+    }
+
+    // 🟢 Kargolanmamışsa veya kullanıcı onayladıysa → formu aç
+    document.getElementById("cancelForm").style.display = "block";
+    document.getElementById("actionButtons").style.display = "none";
+
+  } catch (e) {
+    console.error("openCancelForm Hatası:", e);
+    toast("Bir hata oluştu.");
   }
-
-  // 🟢 Uyarı yoksa veya kullanıcı onayladıysa → Formu aç
-  document.getElementById("cancelForm").style.display = "block";
-  document.getElementById("actionButtons").style.display = "none";
 }
 
 
