@@ -268,9 +268,10 @@ function openTrackingUrl(url){
 ============================================================ */
 
 async function deleteCanceledOrder() {
+
   const ok = await confirmModal({
-    title: "Siparişi Listeden Kaldır",
-    text: "Bu iptal edilmiş sipariş sadece ekrandan kaldırılacaktır.\nVeritabanından silinmeyecektir.",
+    title: "Siparişi Sil",
+    text: "Bu sipariş tamamen listelerden kaldırılacaktır. İşlem geri alınamaz.\nOnaylıyor musunuz?",
     confirmText: "Sil",
     cancelText: "Vazgeç"
   });
@@ -278,13 +279,18 @@ async function deleteCanceledOrder() {
   if (!ok) return;
 
   await db.from(TABLE)
-    .update({ silindi: true })
+    .update({ 
+      kargo_durumu: "Silindi",
+      iptal_nedeni: null,
+      iptal_tarihi: new Date().toISOString()
+    })
     .eq("siparis_no", selectedOrder.siparis_no);
 
-  toast("Sipariş ekrandan kaldırıldı");
+  toast("Sipariş silindi");
   closeModal();
   loadOrders(true);
 }
+
 
 
 /* ============================================================
