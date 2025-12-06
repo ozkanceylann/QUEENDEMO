@@ -264,6 +264,30 @@ function openTrackingUrl(url){
 }
 
 /* ============================================================
+   İPTALDEN SİLME
+============================================================ */
+
+async function deleteCanceledOrder() {
+  const ok = await confirmModal({
+    title: "Siparişi Listeden Kaldır",
+    text: "Bu iptal edilmiş sipariş sadece ekrandan kaldırılacaktır.\nVeritabanından silinmeyecektir.",
+    confirmText: "Sil",
+    cancelText: "Vazgeç"
+  });
+
+  if (!ok) return;
+
+  await db.from(TABLE)
+    .update({ silindi: true })
+    .eq("siparis_no", selectedOrder.siparis_no);
+
+  toast("Sipariş ekrandan kaldırıldı");
+  closeModal();
+  loadOrders(true);
+}
+
+
+/* ============================================================
    GÖNDERİM HATA DETAYI
 ============================================================ */
 function showErrorDetail(message=""){
