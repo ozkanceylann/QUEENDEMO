@@ -1018,6 +1018,7 @@ Object.assign(window, {
   restoreOrder,
 
   queryCityDistrictCodes,
+deleteCanceledOrder,
 
   printSiparis,
 });
