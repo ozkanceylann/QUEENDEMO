@@ -824,7 +824,7 @@ try{
   setTimeout(()=>busy.kargola.delete(key), 20000);
 }
 
-
+}
 
 async function printBarcode(){
   const ok = await confirmModal({
