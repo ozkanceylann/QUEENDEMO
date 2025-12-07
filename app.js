@@ -1132,7 +1132,61 @@ Object.assign(window, {
 deleteCanceledOrder,
 
   printSiparis,
+   barkodBas,
 });
+
+/* ============================================================
+   BARKOD PDF MERGE & YAZDIRMA
+============================================================ */
+
+// Tek PDF'e birleştirme fonksiyonu
+async function mergePdfs(pdfBase64Array) {
+  const { PDFDocument } = PDFLib;
+  const mergedPdf = await PDFDocument.create();
+
+  for (const base64 of pdfBase64Array) {
+    const pdfBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+    const pdf = await PDFDocument.load(pdfBytes);
+    const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+    pages.forEach(p => mergedPdf.addPage(p));
+  }
+
+  const mergedBytes = await mergedPdf.save();
+  return btoa(String.fromCharCode(...mergedBytes));
+}
+
+
+// Barkod Bas → Supabase'den PDF listesi çek → Birleştir → Aç
+async function barkodBas(siparisNo) {
+  await window.waitConfig();
+
+  const { data, error } = await db
+    .from(TABLE)
+    .select("zpl_base64")
+    .eq("siparis_no", siparisNo)
+    .single();
+
+  if (error || !data || !data.zpl_base64) {
+    return toast("Barkod PDF bulunamadı!");
+  }
+
+  let pdfList = [];
+  try {
+    pdfList = JSON.parse(data.zpl_base64);
+  } catch {
+    return toast("ZPL Base64 formatı okunamadı!");
+  }
+
+  if (!Array.isArray(pdfList) || pdfList.length === 0) {
+    return toast("Barkod listesi boş!");
+  }
+
+  const mergedBase64 = await mergePdfs(pdfList);
+  const url = "data:application/pdf;base64," + mergedBase64;
+  window.open(url, "_blank");
+}
+
+
 
 /* ============================================================
    BAŞLAT
