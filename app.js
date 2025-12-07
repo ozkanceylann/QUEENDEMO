@@ -826,7 +826,7 @@ try{
 
 }
 
-async function printBarcode(){
+/*async function printBarcode(){
   const ok = await confirmModal({
     title:"Barkod Kes",
     text:"Barkod isteği gönderilecek.",
@@ -851,7 +851,7 @@ async function printBarcode(){
   }finally{
     setTimeout(()=>busy.barkod.delete(key), 20000);
   }
-}
+}*/
 
 /* ============================================================
    İPTAL / GERİ AL
