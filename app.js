@@ -320,30 +320,42 @@ function showErrorDetail(message=""){
 
   wrap.querySelector("#errorClose").onclick = () => wrap.remove();
 }
+
 /* ============================================================
-   API SONUCU POPUP (BİLGİ KARTI)
+   API ÖNİZLEME POPUP (tek örnek, güvenli)
 ============================================================ */
-function showApiResult(result = "") {
+function showApiResult(content) {
   const root = document.getElementById("alertRoot");
+  // Önce var olanı sil (tek örnek olsun)
+  root.querySelectorAll(".alert-backdrop").forEach(n => n.remove());
+
   const wrap = document.createElement("div");
   wrap.className = "alert-backdrop";
+  // Backdrop tıklamasıyla kapansın (karta tıklamada kapanmasın)
+  wrap.addEventListener("click", (e) => {
+    if (e.target === wrap) wrap.remove();
+  });
 
-  const pretty = typeof result === "string"
-    ? result
-    : JSON.stringify(result, null, 2);
+  // İçerik: PNG <img> ya da metin (ZPL/JSON)
+  const isString = typeof content === "string";
+  const html = isString && content.trim().startsWith("<img")
+    ? content
+    : `<textarea class="error-detail-text" readonly>${
+        isString ? content : JSON.stringify(content, null, 2)
+      }</textarea>`;
 
   wrap.innerHTML = `
-    <div class="alert-card">
+    <div class="alert-card" style="pointer-events:auto">
       <div class="alert-title">API Yanıtı</div>
-      <div class="alert-text">
-        <textarea class="error-detail-text" readonly>${pretty}</textarea>
-      </div>
+      <div class="alert-text">${html}</div>
       <div class="alert-actions">
-        <button class="btn-brand" id="apiOk">Kapat</button>
+        <button class="btn-brand" id="apiOkBtn">Kapat</button>
       </div>
-    </div>`;
+    </div>
+  `;
   root.appendChild(wrap);
-  wrap.querySelector("#apiOk").onclick = () => wrap.remove();
+
+  wrap.querySelector("#apiOkBtn").onclick = () => wrap.remove();
 }
 
 /* ============================================================
