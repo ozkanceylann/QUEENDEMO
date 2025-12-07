@@ -1102,7 +1102,7 @@ document.addEventListener("DOMContentLoaded", () => {
 Object.assign(window, {
   logout,
   loadOrders,
-   loadMore,
+  loadMore,
   setTab,
   searchOrders,
   clearSearch,
@@ -1117,7 +1117,6 @@ Object.assign(window, {
   setWaiting,
   markPrepared,
   sendToCargo,
-  printBarcode,
 
   enterEditMode,
   saveEdit,
@@ -1129,11 +1128,12 @@ Object.assign(window, {
   restoreOrder,
 
   queryCityDistrictCodes,
-deleteCanceledOrder,
+  deleteCanceledOrder,
 
   printSiparis,
-   barkodBas,
+  barkodBas,   // 👍 TEK BARKOD FONKSİYONU BU OLMALI
 });
+
 
 /* ============================================================
    BARKOD PDF MERGE & YAZDIRMA
