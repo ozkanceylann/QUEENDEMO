@@ -320,6 +320,31 @@ function showErrorDetail(message=""){
 
   wrap.querySelector("#errorClose").onclick = () => wrap.remove();
 }
+/* ============================================================
+   API SONUCU POPUP (BİLGİ KARTI)
+============================================================ */
+function showApiResult(result = "") {
+  const root = document.getElementById("alertRoot");
+  const wrap = document.createElement("div");
+  wrap.className = "alert-backdrop";
+
+  const pretty = typeof result === "string"
+    ? result
+    : JSON.stringify(result, null, 2);
+
+  wrap.innerHTML = `
+    <div class="alert-card">
+      <div class="alert-title">API Yanıtı</div>
+      <div class="alert-text">
+        <textarea class="error-detail-text" readonly>${pretty}</textarea>
+      </div>
+      <div class="alert-actions">
+        <button class="btn-brand" id="apiOk">Kapat</button>
+      </div>
+    </div>`;
+  root.appendChild(wrap);
+  wrap.querySelector("#apiOk").onclick = () => wrap.remove();
+}
 
 /* ============================================================
    DETAY
@@ -758,26 +783,37 @@ Bu işlem normal şartlarda geri alınamaz ve iptal durumunda kargo firması ek 
   if(busy.kargola.has(key)) return toast("Bu sipariş zaten işleniyor.");
   busy.kargola.add(key);
 
-  try{
-    await fetch(WH_KARGOLA, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(selectedOrder)
-    });
+try{
+  const res = await fetch(WH_KARGOLA, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(selectedOrder)
+  });
 
+  let payload = null;
+  try { payload = await res.json(); } catch {}
+
+  // 1) Kısa mesaj (toast)
+  if (payload?.message) {
+    toast(payload.message);
+  } else {
     toast("Kargoya gönderildi.");
-
-    // 🔥 1 saniye sonra listeyi yenile
-    setTimeout(() => {
-      loadOrders(true);
-    }, 1000);
-
-  }catch(e){
-    toast("Gönderim hatası");
-  }finally{
-    setTimeout(()=>busy.kargola.delete(key), 20000);
   }
+
+  // 2) Detay görmek istersen (HTTP Request gövdesi)
+  if (payload?.apiResult) {
+    showApiResult(payload.apiResult);
+  }
+
+  // 🔄 1 sn sonra listeyi yenile
+  setTimeout(() => { loadOrders(true); }, 1000);
+
+}catch(e){
+  toast("Gönderim hatası");
+}finally{
+  setTimeout(()=>busy.kargola.delete(key), 20000);
 }
+
 
 
 async function printBarcode(){
