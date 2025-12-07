@@ -1172,19 +1172,20 @@ async function barkodBas(siparisNo) {
   }
 
   let pdfList = [];
+
   try {
-    pdfList = JSON.parse(data.zpl_base64);
-  } catch {
-    return toast("ZPL Base64 formatı okunamadı!");
+    const arr = JSON.parse(data.zpl_base64); // Supabase JSON formatlı
+    pdfList = arr.map(x => x.data); // sadece base64 stringleri al
+  } catch (e) {
+    return toast("Barkod verisi okunamadı!");
   }
 
-  if (!Array.isArray(pdfList) || pdfList.length === 0) {
+  if (!pdfList.length) {
     return toast("Barkod listesi boş!");
   }
 
   const mergedBase64 = await mergePdfs(pdfList);
 
-  // Yeni barkod yazdırma penceresini aç
   const win = window.open("/barkod_print.html", "_blank");
 
   const timer = setInterval(() => {
