@@ -802,24 +802,22 @@ try{
     body: JSON.stringify(selectedOrder)
   });
 
-  let payload = null;
+  let payload = {};
   try { payload = await res.json(); } catch {}
 
-  // 1) Kısa mesaj (toast)
-  if (payload?.message) {
-    toast(payload.message);
-  } else {
-    toast("Kargoya gönderildi.");
+  // Kısa bildirim
+  toast(payload?.message || "Kargoya gönderildi.");
+
+  // PNG geldiyse göster
+  if (payload?.png) {
+    showApiResult(`<img src="${payload.png}" style="max-width:360px;border:1px solid #ccc;border-radius:8px">`);
+  }
+  // ZPL/JSON geldiyse metin olarak göster
+  else if (payload?.apiResult || payload?.zpl || payload?.result) {
+    showApiResult(payload.apiResult || payload.zpl || payload.result);
   }
 
-  // 2) Detay görmek istersen (HTTP Request gövdesi)
-  if (payload?.apiResult) {
-    showApiResult(payload.apiResult);
-  }
-
-  // 🔄 1 sn sonra listeyi yenile
-  setTimeout(() => { loadOrders(true); }, 1000);
-
+  setTimeout(()=>loadOrders(true), 1000);
 }catch(e){
   toast("Gönderim hatası");
 }finally{
