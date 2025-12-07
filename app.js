@@ -1139,16 +1139,18 @@ deleteCanceledOrder,
    BARKOD PDF MERGE & YAZDIRMA
 ============================================================ */
 
-// Tek PDF'e birleştirme fonksiyonu
 async function mergePdfs(pdfBase64Array) {
   const { PDFDocument } = PDFLib;
   const mergedPdf = await PDFDocument.create();
 
   for (const base64 of pdfBase64Array) {
-    const pdfBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+    const pdfBytes = Uint8Array.from(atob(base64), (c) =>
+      c.charCodeAt(0)
+    );
     const pdf = await PDFDocument.load(pdfBytes);
+
     const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-    pages.forEach(p => mergedPdf.addPage(p));
+    pages.forEach((p) => mergedPdf.addPage(p));
   }
 
   const mergedBytes = await mergedPdf.save();
@@ -1156,7 +1158,6 @@ async function mergePdfs(pdfBase64Array) {
 }
 
 
-// Barkod Bas → Supabase'den PDF listesi çek → Birleştir → Aç
 async function barkodBas(siparisNo) {
   await window.waitConfig();
 
@@ -1182,10 +1183,17 @@ async function barkodBas(siparisNo) {
   }
 
   const mergedBase64 = await mergePdfs(pdfList);
-  const url = "data:application/pdf;base64," + mergedBase64;
-  window.open(url, "_blank");
-}
 
+  // Yeni barkod yazdırma penceresini aç
+  const win = window.open("/barkod_print.html", "_blank");
+
+  const timer = setInterval(() => {
+    if (win && win.showPdf) {
+      clearInterval(timer);
+      win.showPdf(mergedBase64);
+    }
+  }, 200);
+}
 
 
 /* ============================================================
