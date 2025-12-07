@@ -824,35 +824,6 @@ try{
   setTimeout(()=>busy.kargola.delete(key), 20000);
 }
 
-}
-
-/*async function printBarcode(){
-  const ok = await confirmModal({
-    title:"Barkod Kes",
-    text:"Barkod isteği gönderilecek.",
-    confirmText:"Gönder",
-    cancelText:"Vazgeç"
-  });
-  if(!ok) return;
-
-  const key = selectedOrder.siparis_no;
-  if(busy.barkod.has(key)) return toast("Barkod zaten bekliyor");
-  busy.barkod.add(key);
-
-  try{
-    await fetch(WH_BARKOD, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(selectedOrder)
-    });
-    toast("Barkod gönderildi");
-  }catch(e){
-    toast("Barkod hatası!");
-  }finally{
-    setTimeout(()=>busy.barkod.delete(key), 20000);
-  }
-}*/
-
 /* ============================================================
    İPTAL / GERİ AL
 ============================================================ */
