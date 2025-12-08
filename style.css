@@ -524,18 +524,3 @@ body.login-page {
   display: none;
 }
 
-/* ============================================================
-   GLOBAL TABLE ROW HEIGHT (Tüm tablar için aynı görünüm)
-============================================================ */
-.orders-table td,
-.orders-table th {
-    padding: 6px 8px !important;
-    height: 38px !important;
-    line-height: 1.2 !important;
-    vertical-align: middle !important;
-}
-
-/* Satırların çok genişlemesini önle */
-.orders-table tr {
-    height: 38px !important;
-}
