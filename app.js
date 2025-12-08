@@ -322,6 +322,43 @@ function showErrorDetail(message=""){
 }
 
 /* ============================================================
+   API ÖNİZLEME POPUP (tek örnek, güvenli)
+============================================================ */
+function showApiResult(content) {
+  const root = document.getElementById("alertRoot");
+  // Önce var olanı sil (tek örnek olsun)
+  root.querySelectorAll(".alert-backdrop").forEach(n => n.remove());
+
+  const wrap = document.createElement("div");
+  wrap.className = "alert-backdrop";
+  // Backdrop tıklamasıyla kapansın (karta tıklamada kapanmasın)
+  wrap.addEventListener("click", (e) => {
+    if (e.target === wrap) wrap.remove();
+  });
+
+  // İçerik: PNG <img> ya da metin (ZPL/JSON)
+  const isString = typeof content === "string";
+  const html = isString && content.trim().startsWith("<img")
+    ? content
+    : `<textarea class="error-detail-text" readonly>${
+        isString ? content : JSON.stringify(content, null, 2)
+      }</textarea>`;
+
+  wrap.innerHTML = `
+    <div class="alert-card" style="pointer-events:auto">
+      <div class="alert-title">API Yanıtı</div>
+      <div class="alert-text">${html}</div>
+      <div class="alert-actions">
+        <button class="btn-brand" id="apiOkBtn">Kapat</button>
+      </div>
+    </div>
+  `;
+  root.appendChild(wrap);
+
+  wrap.querySelector("#apiOkBtn").onclick = () => wrap.remove();
+}
+
+/* ============================================================
    DETAY
 ============================================================ */
 async function openOrder(id){
@@ -758,27 +795,36 @@ Bu işlem normal şartlarda geri alınamaz ve iptal durumunda kargo firması ek 
   if(busy.kargola.has(key)) return toast("Bu sipariş zaten işleniyor.");
   busy.kargola.add(key);
 
-  try{
-    await fetch(WH_KARGOLA, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(selectedOrder)
-    });
+try{
+  const res = await fetch(WH_KARGOLA, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(selectedOrder)
+  });
 
-    toast("Kargoya gönderildi.");
+  let payload = {};
+  try { payload = await res.json(); } catch {}
 
-    // 🔥 1 saniye sonra listeyi yenile
-    setTimeout(() => {
-      loadOrders(true);
-    }, 1000);
+  // Kısa bildirim
+  toast(payload?.message || "Kargoya gönderildi.");
 
-  }catch(e){
-    toast("Gönderim hatası");
-  }finally{
-    setTimeout(()=>busy.kargola.delete(key), 20000);
+  // PNG geldiyse göster
+  if (payload?.png) {
+    showApiResult(`<img src="${payload.png}" style="max-width:360px;border:1px solid #ccc;border-radius:8px">`);
   }
+  // ZPL/JSON geldiyse metin olarak göster
+  else if (payload?.apiResult || payload?.zpl || payload?.result) {
+    showApiResult(payload.apiResult || payload.zpl || payload.result);
+  }
+
+  setTimeout(()=>loadOrders(true), 1000);
+}catch(e){
+  toast("Gönderim hatası");
+}finally{
+  setTimeout(()=>busy.kargola.delete(key), 20000);
 }
 
+}
 
 async function printBarcode(){
   const ok = await confirmModal({
