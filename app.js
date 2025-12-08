@@ -796,11 +796,17 @@ Bu işlem normal şartlarda geri alınamaz ve iptal durumunda kargo firması ek 
   busy.kargola.add(key);
 
 try{
-  const res = await fetch(WH_KARGOLA, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify(selectedOrder)
-  });
+const res = await fetch(WH_KARGOLA, {
+  method:"POST",
+  headers:{ "Content-Type":"application/json" },
+  body: JSON.stringify(selectedOrder)
+});
+
+const data = await res.json();
+
+// Artık data içindeki bilgileri gösterebilirsin
+console.log("N8N cevabı:", data);
+
 
   let payload = {};
   try { payload = await res.json(); } catch {}
