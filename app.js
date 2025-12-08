@@ -37,8 +37,6 @@ let selectedOrder = null;
 
 const busy = { kargola: new Set(), barkod: new Set() };
 
-
-
 /* ============================================================
    UI HELPERS
 ============================================================ */
@@ -84,12 +82,11 @@ function toggleLoadMore(visible){
   btn.style.display = visible ? "block" : "none";
 }
 
-// Sidebar menü tıklanınca otomatik kapanması (mobil)
 document.querySelectorAll(".sidebar .menu li").forEach(item => {
   item.addEventListener("click", () => {
     const sidebar = document.querySelector(".sidebar");
     if (sidebar.classList.contains("open")) {
-      sidebar.classList.remove("open"); // KAPAT
+      sidebar.classList.remove("open");
     }
   });
 });
@@ -136,8 +133,8 @@ async function loadOrders(reset=false){
   if(currentTab==="bekleyen")   q = q.eq("kargo_durumu","Bekliyor");
   if(currentTab==="hazirlandi") q = q.eq("kargo_durumu","Hazırlandı");
   if(currentTab==="kargolandi") q = q.eq("kargo_durumu","Kargolandı");
-  if(currentTab==="tamamlandi") q=q.eq("shipmentStatusCode",5);
-  if(currentTab==="sorunlu")    q=q.in("shipmentStatusCode",[6,7]); // 6: sorunlu, 7: iade
+  if(currentTab==="tamamlandi") q = q.eq("shipmentStatusCode",5);
+  if(currentTab==="sorunlu")    q = q.in("shipmentStatusCode",[6,7]);
   if(currentTab==="iptal")      q = q.eq("kargo_durumu","İptal");
 
   const start = (currentPage - 1) * PAGE_SIZE;
@@ -180,26 +177,24 @@ function renderTable(rows, { append=false, hasMore } = {}){
   rows.forEach(o=>{
     const tr = document.createElement("tr");
 
-   const durumText = ["kargolandi", "tamamlandi", "sorunlu"].includes(currentTab)
-    ? (o.shipmentStatus ?? "—")
-    : o.kargo_durumu;
+    const durumText = ["kargolandi", "tamamlandi", "sorunlu"].includes(currentTab)
+      ? (o.shipmentStatus ?? "—")
+      : o.kargo_durumu;
 
     const isTrackingTab = ["kargolandi", "tamamlandi", "sorunlu"].includes(currentTab);
-
     const isPendingTab = currentTab === "bekleyen";
+    const isPreparedTab = currentTab === "hazirlandi";
 
-  const isPreparedTab = currentTab === "hazirlandi";
+    const actionBtn = isTrackingTab
+      ? `<button class="btn-open" onclick="event.stopPropagation(); openTrackingUrl('${o.kargo_takip_url ?? ""}')">Sorgula</button>`
+      : `<button class="btn-open">Aç</button>`;
 
-  const actionBtn = isTrackingTab
-    ? `<button class="btn-open" onclick="event.stopPropagation(); openTrackingUrl('${o.kargo_takip_url ?? ""}')">Sorgula</button>`
-    : `<button class="btn-open">Aç</button>`;
-
-  const errorPreview = isPreparedTab
-    ? `<button class="error-chip" onclick="event.stopPropagation(); showErrorDetail(${JSON.stringify(o.gonder_hata_bilgisi ?? "")})" title="Detayı görmek için tıkla">
-         <span class="error-chip__label">Hata</span>
-         <span class="error-chip__text">${escapeHtml(shortenError(o.gonder_hata_bilgisi))}</span>
-       </button>`
-    : actionBtn;
+    const errorPreview = isPreparedTab
+      ? `<button class="error-chip" onclick="event.stopPropagation(); showErrorDetail(${JSON.stringify(o.gonder_hata_bilgisi ?? "")})" title="Detayı görmek için tıkla">
+           <span class="error-chip__label">Hata</span>
+           <span class="error-chip__text">${escapeHtml(shortenError(o.gonder_hata_bilgisi))}</span>
+         </button>`
+      : actionBtn;
 
 
     tr.innerHTML = isPendingTab
@@ -266,7 +261,6 @@ function openTrackingUrl(url){
 /* ============================================================
    İPTALDEN SİLME
 ============================================================ */
-
 async function deleteCanceledOrder() {
 
   const ok = await confirmModal({
@@ -292,11 +286,8 @@ async function deleteCanceledOrder() {
   setTimeout(() => loadOrders(true), 1000);
 }
 
-
-
-
 /* ============================================================
-   GÖNDERİM HATA DETAYI
+   HATA DETAY
 ============================================================ */
 function showErrorDetail(message=""){
   const root = document.getElementById("alertRoot");
@@ -322,21 +313,19 @@ function showErrorDetail(message=""){
 }
 
 /* ============================================================
-   API ÖNİZLEME POPUP (tek örnek, güvenli)
+   API ÖNİZLEME
 ============================================================ */
 function showApiResult(content) {
   const root = document.getElementById("alertRoot");
-  // Önce var olanı sil (tek örnek olsun)
   root.querySelectorAll(".alert-backdrop").forEach(n => n.remove());
 
   const wrap = document.createElement("div");
   wrap.className = "alert-backdrop";
-  // Backdrop tıklamasıyla kapansın (karta tıklamada kapanmasın)
+
   wrap.addEventListener("click", (e) => {
     if (e.target === wrap) wrap.remove();
   });
 
-  // İçerik: PNG <img> ya da metin (ZPL/JSON)
   const isString = typeof content === "string";
   const html = isString && content.trim().startsWith("<img")
     ? content
@@ -359,7 +348,7 @@ function showApiResult(content) {
 }
 
 /* ============================================================
-   DETAY
+   DETAY MODAL
 ============================================================ */
 async function openOrder(id){
   const { data } = await db.from(TABLE).select("*").eq("siparis_no", id).single();
@@ -373,15 +362,16 @@ function closeModal(){
   document.getElementById("orderModal").style.display = "none"; 
 }
 
+
 function renderDetails() {
   const d = selectedOrder;
 
-  /* — TÜM BUTONLARI RESETLE — */
+  // TÜM BUTONLARI RESETLE
   document.querySelectorAll("#actionButtons button").forEach(btn => {
     btn.style.display = "inline-block";
   });
 
-  /* — DETAY HTML — */
+  // DETAY HTML
   document.getElementById("orderDetails").innerHTML = `
     <p><b>No:</b> ${d.siparis_no}</p>
     <p><b>İsim:</b> ${d.ad_soyad}</p>
@@ -404,74 +394,20 @@ function renderDetails() {
     <p><b>Not:</b> ${d.notlar ?? "-"}</p>
   `;
 
-
-  /* ============================================================
-      1) SOR BUTONU — SADECE Bekliyor & Hazırlandı
-  ============================================================ */
-  try {
-    const sorBtn = document.querySelector(".btn-mini");
-    if (sorBtn) {
-      sorBtn.style.display = ["Bekliyor", "Hazırlandı"].includes(d.kargo_durumu)
-        ? "inline-block"
-        : "none";
-    }
-  } catch {}
-
-  /* ============================================================
-      2) DÜZENLE BUTONU
-         Hazırlandı → Gizle
-         Kargolandı → Gizle  ❗ (senin istediğin)
-  ============================================================ */
-  try {
-    const duzenleBtn = document.querySelector("#actionButtons .btn-warning");
-    if (duzenleBtn && ["Hazırlandı", "Kargolandı"].includes(d.kargo_durumu)) {
-      duzenleBtn.style.display = "none";
-    }
-  } catch {}
-
-
-  /* ============================================================
-      3) BEKLİYOR BUTONU
-         Bekleyen → gizle
-         Hazırlandı → göster
-         Diğer durumlar → gizle
-  ============================================================ */
-  try {
-    const bekliyorBtn = document.getElementById("btnWaiting");
-
-    if (bekliyorBtn) {
-      if (d.kargo_durumu === "Bekliyor") {
-        bekliyorBtn.style.display = "none";
-      } else if (d.kargo_durumu === "Hazırlandı") {
-        bekliyorBtn.style.display = "inline-block";
-      } else {
-        bekliyorBtn.style.display = "none";
-      }
-    }
-  } catch {}
-
-
-  /* ============================================================
-      4) DİĞER BUTONLAR
-  ============================================================ */
-
   const iptal = d.kargo_durumu === "İptal";
   const kargo = d.kargo_durumu === "Kargolandı";
   const tamam = d.kargo_durumu === "Tamamlandı";
 
-  // Bekleyeni → Hazırla
   document.getElementById("btnPrepare").style.display =
     d.kargo_durumu === "Bekliyor" ? "inline-block" : "none";
 
-  // Hazırlandı → Kargola
   document.getElementById("btnCargo").style.display =
     d.kargo_durumu === "Hazırlandı" ? "inline-block" : "none";
 
-  // Kargolandı → Barkod kes
+  // *** BARKOD BAS BUTONU ***
   document.getElementById("btnBarcode").style.display =
     kargo ? "inline-block" : "none";
 
-  // Tamamlandı → butonları kapat, sadece kapat butonu açık kalsın
   if (tamam) {
     document.querySelectorAll("#actionButtons button").forEach(btn => {
       btn.style.display = "none";
@@ -479,145 +415,11 @@ function renderDetails() {
     document.querySelector("#actionButtons .btn-close").style.display = "inline-block";
   }
 
-  // İptal → tüm actionButtons gizli, restoreButtons açık
   document.getElementById("actionButtons").style.display = iptal ? "none" : "flex";
   document.getElementById("restoreButtons").style.display = iptal ? "flex" : "none";
 
-  // edit mode kapanmalı
   document.getElementById("editButtons").style.display = "none";
   document.getElementById("cancelForm").style.display = "none";
-}
-
-
-/* ============================================================
-   ŞEHİR/İLÇE KODU SOR  (ORİJİNAL - WEBHOOK İLE)
-============================================================ */
-async function queryCityDistrictCodes(){
-  toast("Kodlar sorgulanıyor...");
-
-  const res = await fetch(WH_SEHIR_ILCE, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify(selectedOrder)
-  });
-
-  if(!res.ok) return toast("Kod bulunamadı");
-
-  const d = await res.json();
-
-  await db.from(TABLE)
-    .update({ sehir_kodu:d.sehir_kodu, ilce_kodu:d.ilce_kodu })
-    .eq("siparis_no", selectedOrder.siparis_no);
-
-  toast("Kodlar güncellendi");
-  openOrder(selectedOrder.siparis_no);
-}
-
-/* ============================================================
-   ŞEHİR / İLÇE REFERANSI
-============================================================ */
-async function loadCities(){
-  if(cityCache.length) return cityCache;
-
-  const { data, error } = await db
-    .from("sehir")
-    .select("id, name")
-    .order("name", { ascending:true });
-
-  if(error){
-    toast("Şehir listesi alınamadı");
-    return [];
-  }
-
-  cityCache.splice(0, cityCache.length, ...(data || []));
-  return cityCache;
-}
-
-async function loadDistricts(cityId){
-  if(!cityId) return [];
-  if(districtCache.has(cityId)) return districtCache.get(cityId) || [];
-
-  const { data, error } = await db
-    .from("ilce")
-    .select("id, city_id, name, code")
-    .eq("city_id", cityId)
-    .order("name", { ascending:true });
-
-  if(error){
-    toast("İlçe listesi alınamadı");
-    districtCache.set(cityId, []);
-    return [];
-  }
-
-  districtCache.set(cityId, data || []);
-  return data || [];
-}
-
-function findCityIdForOrder(order, cities){
-  if(order?.sehir_kodu){
-    const hit = cities.find(c => String(c.id) === String(order.sehir_kodu));
-    if(hit) return String(hit.id);
-  }
-
-  if(order?.sehir){
-    const hit = cities.find(c => c.name?.toLowerCase() === order.sehir.toLowerCase());
-    if(hit) return String(hit.id);
-  }
-
-  return "";
-}
-
-function findDistrictIdForOrder(order, districts){
-  if(order?.ilce_kodu){
-    const hit = districts.find(d => String(d.code) === String(order.ilce_kodu));
-    if(hit) return String(hit.id);
-  }
-
-  if(order?.ilce){
-    const hit = districts.find(d => d.name?.toLowerCase() === order.ilce.toLowerCase());
-    if(hit) return String(hit.id);
-  }
-
-  return "";
-}
-
-function renderOptions(selectEl, list, { placeholder="Seçiniz", selectedValue="", includeCode=false } = {}){
-  if(!selectEl) return;
-  const opts = [`<option value="">${placeholder}</option>`];
-  (list || []).forEach(item => {
-    const attrs = [
-      `value="${item.id}"`,
-      includeCode ? `data-code="${item.code ?? ''}"` : ""
-    ].filter(Boolean).join(" ");
-
-    opts.push(`<option ${attrs}>${item.name}</option>`);
-  });
-
-  selectEl.innerHTML = opts.join("");
-  if(selectedValue) selectEl.value = String(selectedValue);
-}
-
-async function populateDistrictSelect(cityId, selectedDistrictId){
-  const districtSelect = document.getElementById("ilce_select");
-  const ilceInput      = document.getElementById("ilce");
-  const ilceKoduInput  = document.getElementById("ilce_kodu");
-
-  const districts = await loadDistricts(cityId);
-
-  renderOptions(districtSelect, districts, {
-    placeholder: cityId ? "İlçe seçiniz" : "Önce şehir seçin",
-    selectedValue: selectedDistrictId,
-    includeCode: true,
-  });
-
-  const active = districtSelect?.selectedOptions?.[0];
-  if(active){
-    ilceInput.value = active.textContent;
-    ilceKoduInput.value = active.dataset.code || "";
-  }else{
-    ilceInput.value = "";
-    ilceKoduInput.value = "";
-  }
 }
 
 /* ============================================================
@@ -659,16 +461,6 @@ async function enterEditMode(){
           <input id="ilce" type="hidden" value="${d.ilce ?? ""}">
         </div>
 
-        <div class="form-field">
-          <label>Şehir Kodu</label>
-          <input id="sehir_kodu" class="input-ghost" value="${d.sehir_kodu ?? ""}" readonly>
-        </div>
-
-        <div class="form-field">
-          <label>İlçe Kodu</label>
-          <input id="ilce_kodu" class="input-ghost" value="${d.ilce_kodu ?? ""}" readonly>
-        </div>
-
         <div class="form-field"><label>Kargo Adet</label><input id="kargo_adet" value="${d.kargo_adet??""}"></div>
         <div class="form-field"><label>Kargo KG</label><input id="kargo_kg" value="${d.kargo_kg??""}"></div>
 
@@ -686,72 +478,12 @@ async function enterEditMode(){
 
   await populateDistrictSelect(selectedCityId, selectedDistrictId);
 
-  const citySelect = document.getElementById("sehir_select");
-  const districtSelect = document.getElementById("ilce_select");
-  const sehirInput = document.getElementById("sehir");
-  const ilceInput = document.getElementById("ilce");
-  const sehirKoduInput = document.getElementById("sehir_kodu");
-  const ilceKoduInput = document.getElementById("ilce_kodu");
-
-  // ilk açılış değerleri
-  sehirInput.value = citySelect?.selectedOptions?.[0]?.textContent || (d.sehir ?? "");
-  sehirKoduInput.value = citySelect?.value || (d.sehir_kodu ?? "");
-
-  const activeDistrict = districtSelect?.selectedOptions?.[0];
-  if(activeDistrict){
-    ilceInput.value = activeDistrict.textContent;
-    ilceKoduInput.value = activeDistrict.dataset.code || "";
-  }
-
-  citySelect?.addEventListener("change", async()=>{
-    const name = citySelect.selectedOptions?.[0]?.textContent || "";
-    sehirInput.value = name;
-    sehirKoduInput.value = citySelect.value || "";
-    await populateDistrictSelect(citySelect.value, "");
-  });
-
-  districtSelect?.addEventListener("change", ()=>{
-    const opt = districtSelect.selectedOptions?.[0];
-    ilceInput.value = opt?.textContent || "";
-    ilceKoduInput.value = opt?.dataset.code || "";
-  });
-
   document.getElementById("actionButtons").style.display = "none";
   document.getElementById("editButtons").style.display = "flex";
 }
 
-async function saveEdit(){
-  const citySelect = document.getElementById("sehir_select");
-  const districtSelect = document.getElementById("ilce_select");
-
-  const sehirName = citySelect?.selectedOptions?.[0]?.textContent || (document.getElementById("sehir")?.value ?? "");
-  const ilceName  = districtSelect?.selectedOptions?.[0]?.textContent || (document.getElementById("ilce")?.value ?? "");
-
-  const sehirKoduVal = citySelect?.value || document.getElementById("sehir_kodu")?.value || null;
-  const ilceKoduVal  = districtSelect?.selectedOptions?.[0]?.dataset.code || document.getElementById("ilce_kodu")?.value || null;
-
-  const updated = {
-    ad_soyad: ad_soyad.value, siparis_tel: siparis_tel.value, musteri_tel: musteri_tel.value,
-    adres: adres.value, sehir: sehirName, ilce: ilceName,
-    sehir_kodu: sehirKoduVal, ilce_kodu: ilceKoduVal,
-    kargo_adet: kargo_adet.value, kargo_kg: kargo_kg.value,
-    urun_bilgisi: urun_bilgisi.value, toplam_tutar: toplam_tutar.value,
-    odeme_sekli: odeme_sekli.value, notlar: notlar.value
-  };
-  await db.from(TABLE).update(updated).eq("siparis_no", selectedOrder.siparis_no);
-  toast("Kaydedildi");
-  closeModal();
-  loadOrders(true);
-}
-
-function cancelEdit(){
-  renderDetails();
-  document.getElementById("editButtons").style.display = "none";
-  document.getElementById("actionButtons").style.display = "flex";
-}
-
 /* ============================================================
-   DURUMLAR
+   DURUM GÜNCELLEME
 ============================================================ */
 async function setWaiting(){
   await db.from(TABLE)
@@ -760,7 +492,6 @@ async function setWaiting(){
 
   toast("Sipariş Bekliyor olarak güncellendi");
   closeModal();
-
   setTimeout(() => loadOrders(true), 1000);
 }
 
@@ -770,21 +501,17 @@ async function markPrepared(){
     .eq("siparis_no", selectedOrder.siparis_no);
 
   printSiparis(selectedOrder);
-
   toast("Sipariş Hazırlandı");
   closeModal();
-
   setTimeout(() => loadOrders(true), 1000);
 }
 
-
 async function sendToCargo(){
 
-  /* — Queen Tarzı UYARI PENCERESİ — */
   const ok = await confirmModal({
     title: "Kargoya Gönder",
     text: `Bu sipariş KARGOLANDI olarak işaretlenecek ve DHL'e iletilecektir.
-Bu işlem normal şartlarda geri alınamaz ve iptal durumunda kargo firması ek ücret talep edebilir.`,
+İşlem geri alınamaz.`,
     confirmText: "Evet, Kargola",
     cancelText: "Vazgeç"
   });
@@ -795,342 +522,53 @@ Bu işlem normal şartlarda geri alınamaz ve iptal durumunda kargo firması ek 
   if(busy.kargola.has(key)) return toast("Bu sipariş zaten işleniyor.");
   busy.kargola.add(key);
 
-try{
-  const res = await fetch(WH_KARGOLA, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify(selectedOrder)
-  });
-
-  let payload = {};
-  try { payload = await res.json(); } catch {}
-
-  // Kısa bildirim
-  toast(payload?.message || "Kargoya gönderildi.");
-
-  // PNG geldiyse göster
-  if (payload?.png) {
-    showApiResult(`<img src="${payload.png}" style="max-width:360px;border:1px solid #ccc;border-radius:8px">`);
-  }
-  // ZPL/JSON geldiyse metin olarak göster
-  else if (payload?.apiResult || payload?.zpl || payload?.result) {
-    showApiResult(payload.apiResult || payload.zpl || payload.result);
-  }
-
-  setTimeout(()=>loadOrders(true), 1000);
-}catch(e){
-  toast("Gönderim hatası");
-}finally{
-  setTimeout(()=>busy.kargola.delete(key), 20000);
-}
-
-/* ============================================================
-   İPTAL / GERİ AL
-============================================================ */
-
-function cancelCancelForm(){
-  document.getElementById("cancelForm").style.display = "none";
-  document.getElementById("actionButtons").style.display = "flex";
-}
-
-async function openCancelForm() {
-
-  const codeRaw = selectedOrder?.shipmentStatusCode;
-  let isShipped = false;
-
-  if (codeRaw === null || codeRaw === undefined || codeRaw === "" || codeRaw === "0") {
-    isShipped = false;
-  } else {
-    const num = Number(codeRaw);
-    isShipped = Number.isInteger(num) && num >= 1 && num <= 9;
-  }
-
-  // 🚨 Kargolanmışsa → daha form açılmadan uyarı ver!
-  if (isShipped) {
-    const ok = await confirmModal({
-      title: "Kargolanmış Siparişi İptal Et",
-      text: `Bu sipariş kargoya gönderilmiş durumda.
-İptal sonucu ek ücret çıkabilir.
-
-Devam etmek istiyor musunuz?`,
-      confirmText: "Devam Et",
-      cancelText: "Vazgeç"
+  try{
+    const res = await fetch(WH_KARGOLA, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(selectedOrder)
     });
 
-    if (!ok) return; // vazgeçerse form açma
-  }
+    let payload = {};
+    try { payload = await res.json(); } catch {}
 
-  // 🟢 Kargolanmamışsa veya onay verildiyse → formu aç
-  document.getElementById("cancelForm").style.display = "block";
-  document.getElementById("actionButtons").style.display = "none";
-}
+    toast(payload?.message || "Kargoya gönderildi.");
 
-
-
-/* ============================================================
-   KARGOLANMIŞ İPTAL
-============================================================ */
-
-async function confirmCancel() {
-
-  const reason = document.getElementById("iptalInput").value.trim();
-  if (!reason) return toast("İptal nedeni gerekli");
-
-  const codeRaw = selectedOrder?.shipmentStatusCode;
-  let isShipped = false;
-
-  if (!codeRaw || codeRaw === "0") {
-    isShipped = false;
-  } else {
-    const num = Number(codeRaw);
-    isShipped = Number.isInteger(num) && num >= 1 && num <= 9;
-  }
-
-  // 🚫 BU FONKSİYONDA ALERT / POPUP KESİNLİKLE OLMAYACAK.
-
-  // — Webhook —
-  if (WH_IPTAL) {
-    try {
-      await fetch(WH_IPTAL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...selectedOrder, reason, isShipped })
-      });
-    } catch {
-      toast("İptal webhook gönderilemedi.");
+    if (payload?.png) {
+      showApiResult(`<img src="${payload.png}" style="max-width:360px;border:1px solid #ccc;border-radius:8px">`);
     }
-  }
-
-  // — DB Güncelle —
-  await db.from(TABLE).update({
-    kargo_durumu: "İptal",
-    iptal_nedeni: reason,
-    iptal_tarihi: new Date().toISOString()
-  }).eq("siparis_no", selectedOrder.siparis_no);
-
-  toast("Sipariş iptal edildi");
-  closeModal();
-  loadOrders(true);
-}
-
-
-
-
-async function restoreOrder(){
-  const ok = await confirmModal({
-    title: "Bekleyenlere Geri Al",
-    text: "Bu sipariş bekleyen siparişlere geri alınacaktır. Onaylıyor musunuz?",
-    confirmText: "Evet",
-    cancelText: "Hayır"
-  });
-
-  if(!ok) return;
-
-  await db.from(TABLE).update({
-    kargo_durumu:"Bekliyor",
-    iptal_nedeni:null,
-    iptal_tarihi:null
-  }).eq("siparis_no", selectedOrder.siparis_no);
-
-  toast("Sipariş geri alındı");
-  closeModal();
-
-  setTimeout(() => loadOrders(true), 1000);
-}
-
-/* ============================================================
-   ARAMA
-============================================================ */
-async function searchOrders() {
-  const qRaw = document.getElementById("searchInput").value.trim();
-  if (!qRaw) return loadOrders(true);
-
-  // TÜRKÇE KARAKTER TEMİZLİĞİ + LOWERCASE
-  const q = qRaw
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // aksan temizleme: ö→o, ç→c
-
-  // Supabase V2 için OR query TEK SATIR olmalı!
-  const orQuery = [
-    `siparis_no.eq.${qRaw}`,         // sipariş no sayı olduğu için raw kullanılacak
-    `ad_soyad.ilike.%${q}%`,
-    `siparis_tel.ilike.%${q}%`,
-    `musteri_tel.ilike.%${q}%`,
-    `adres.ilike.%${q}%`,
-    `kargo_takip_kodu.ilike.%${q}%`
-  ].join(",");
-
-  const { data, error } = await db
-    .from(TABLE)
-    .select("*")
-    .or(orQuery);
-
-  if (error) {
-    console.error("Arama Hatası:", error);
-    toast("Arama yapılırken bir hata oluştu!");
-    return;
-  }
-
-  renderTable(data, { append: false, hasMore: false });
-}
-
-
-function clearSearch(){
-  document.getElementById("searchInput").value="";
-  loadOrders(true);
-}
-
-/* ============================================================
-   TAB / LOAD MORE / MOBİL MENÜ
-============================================================ */
-function setTab(tab){
-  currentTab = tab;
-  document.querySelectorAll(".menu li").forEach(li=>li.classList.remove("active"));
-  const el = document.getElementById(`tab_${tab}`);
-  if(el) el.classList.add("active");
-  loadOrders(true);
-}
-
-function loadMore(){
-  currentPage++;
-  loadOrders(false);
-}
-
-function toggleMenu(){
-  document.querySelector(".sidebar").classList.toggle("open");
-}
-
-document.addEventListener("click", e=>{
-  const sidebar = document.querySelector(".sidebar");
-  const btn = document.querySelector(".mobile-menu-btn");
-  if(!sidebar.classList.contains("open")) return;
-  if(sidebar.contains(e.target) || btn.contains(e.target)) return;
-  sidebar.classList.remove("open");
-});
-
-/* ============================================================
-   FİŞ (Adisyon)
-============================================================ */
-function printSiparis(order){
-  const w = window.open("adisyon_print.html", "_blank");
-  if(!w){ toast("Pop-up engellendi. Lütfen bu site için pop-up izni verin."); return; }
-
-  const html = `
-    <div style="font-size:12px">
-      <div><b>No:</b> ${order.siparis_no}</div>
-      <div><b>İsim:</b> ${order.ad_soyad}</div>
-      <div><b>Tel:</b> ${order.musteri_tel ?? ""}</div>
-      <div><b>Adres:</b> ${order.adres ?? ""}</div>
-      <div><b>Şehir/İlçe:</b> ${order.sehir ?? ""} / ${order.ilce ?? ""}</div>
-      <div style="margin:6px 0;border-bottom:1px dashed #000;"></div>
-      <div><b>Ürünler:</b> ${parseProduct(order.urun_bilgisi)}</div>
-      <div><b>Adet:</b> ${order.kargo_adet ?? "-"}</div>
-      <div><b>KG:</b> ${order.kargo_kg ?? "-"}</div>
-      <div><b>Tutar:</b> ${order.toplam_tutar} TL</div>
-      <div><b>Ödeme:</b> ${order.odeme_sekli ?? "-"}</div>
-      <div><b>Not:</b> ${order.notlar ?? "-"}</div>
-    </div>`;
-
-  const inject = ()=>{
-    try{
-      const el = w.document.getElementById("content");
-      if(el){
-        el.innerHTML = html;
-        if(typeof w.doPrint === "function") w.doPrint();
-        else w.print();
-        return true;
-      }
-      return false;
-    }catch{ return false; }
-  };
-
-  let tries = 0;
-  const t = setInterval(()=>{
-    tries++;
-    if(inject() || tries>40) clearInterval(t);
-  }, 100);
-}
-/* ============================================================
-   ENNTER İLE ARA 
-============================================================ */
-
-// ENTER ile arama
-document.addEventListener("DOMContentLoaded", () => {
-  const input = document.getElementById("searchInput");
-  if (!input) return;
-
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();   // Sayfanın yenilenmesini engeller
-      searchOrders();       // 🔥 Aramayı tetikler
+    else if (payload?.apiResult || payload?.zpl || payload?.result) {
+      showApiResult(payload.apiResult || payload.zpl || payload.result);
     }
-  });
-});
+
+    setTimeout(()=>loadOrders(true), 1000);
+
+  }catch(e){
+    toast("Gönderim hatası");
+  }finally{
+    setTimeout(()=>busy.kargola.delete(key), 20000);
+  }
+}
 
 /* ============================================================
-   GLOBAL EXPORT
+   BARKOD PDF MERGE & OTOMATİK YAZDIRMA
 ============================================================ */
-Object.assign(window, {
-  logout,
-  loadOrders,
-  loadMore,
-  setTab,
-  searchOrders,
-  clearSearch,
-  toggleMenu,
-
-  openOrder,
-  closeModal,
-
-  openTrackingUrl,
-  showErrorDetail,
-
-  setWaiting,
-  markPrepared,
-  sendToCargo,
-
-  enterEditMode,
-  saveEdit,
-  cancelEdit,
-
-  openCancelForm,
-  cancelCancelForm,
-  confirmCancel,
-  restoreOrder,
-
-  queryCityDistrictCodes,
-  deleteCanceledOrder,
-
-  printSiparis,
-  barkodBas,   // 👍 TEK BARKOD FONKSİYONU BU OLMALI
-});
-
-
-/* ============================================================
-   BARKOD PDF MERGE & YAZDIRMA
-============================================================ */
-
-async function mergePdfs(pdfBase64Array) {
+async function mergePdfs(base64List){
   const { PDFDocument } = PDFLib;
-  const mergedPdf = await PDFDocument.create();
+  const merged = await PDFDocument.create();
 
-  for (const base64 of pdfBase64Array) {
-    const pdfBytes = Uint8Array.from(atob(base64), (c) =>
-      c.charCodeAt(0)
-    );
+  for (const b64 of base64List){
+    const pdfBytes = Uint8Array.from(atob(b64), x=>x.charCodeAt(0));
     const pdf = await PDFDocument.load(pdfBytes);
-
-    const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-    pages.forEach((p) => mergedPdf.addPage(p));
+    const pages = await merged.copyPages(pdf, pdf.getPageIndices());
+    pages.forEach(p => merged.addPage(p));
   }
 
-  const mergedBytes = await mergedPdf.save();
+  const mergedBytes = await merged.save();
   return btoa(String.fromCharCode(...mergedBytes));
 }
 
-
-async function barkodBas(siparisNo) {
-  await window.waitConfig();
+async function barkodBas(siparisNo){
 
   const { data, error } = await db
     .from(TABLE)
@@ -1138,36 +576,70 @@ async function barkodBas(siparisNo) {
     .eq("siparis_no", siparisNo)
     .single();
 
-  if (error || !data || !data.zpl_base64) {
-    return toast("Barkod PDF bulunamadı!");
+  if(error || !data){
+    return toast("PDF kaydı bulunamadı");
   }
 
-  let pdfList = [];
+  let list = [];
 
-  try {
-    const arr = JSON.parse(data.zpl_base64); // Supabase JSON formatlı
-    pdfList = arr.map(x => x.data); // sadece base64 stringleri al
-  } catch (e) {
-    return toast("Barkod verisi okunamadı!");
+  try{
+    const arr = JSON.parse(data.zpl_base64);
+    list = arr.map(x => x.data);
+  }catch(e){
+    return toast("PDF formatı okunamadı");
   }
 
-  if (!pdfList.length) {
-    return toast("Barkod listesi boş!");
+  if(!list.length){
+    return toast("PDF listesi boş");
   }
 
-  const mergedBase64 = await mergePdfs(pdfList);
+  const merged = await mergePdfs(list);
 
-  const win = window.open("/barkod_print.html", "_blank");
-
-  const timer = setInterval(() => {
-    if (win && win.showPdf) {
+  const win = window.open("barkod_print.html", "_blank");
+  const timer = setInterval(()=>{
+    if(win && win.showPdf){
       clearInterval(timer);
-      win.showPdf(mergedBase64);
+      win.showPdf(merged);
     }
   }, 200);
 }
 
+/* ============================================================
+   GLOBAL EXPORT (module olmadığı için artık ÇALIŞIR)
+============================================================ */
+window.logout               = logout;
+window.loadOrders           = loadOrders;
+window.loadMore             = loadMore;
+window.setTab               = setTab;
+window.searchOrders         = searchOrders;
+window.clearSearch          = clearSearch;
+
+window.openOrder            = openOrder;
+window.closeModal           = closeModal;
+
+window.openTrackingUrl      = openTrackingUrl;
+window.showErrorDetail      = showErrorDetail;
+
+window.setWaiting           = setWaiting;
+window.markPrepared         = markPrepared;
+window.sendToCargo          = sendToCargo;
+
+window.enterEditMode        = enterEditMode;
+window.saveEdit             = saveEdit;
+window.cancelEdit           = cancelEdit;
+
+window.openCancelForm       = openCancelForm;
+window.cancelCancelForm     = cancelCancelForm;
+window.confirmCancel        = confirmCancel;
+window.restoreOrder         = restoreOrder;
+
+window.queryCityDistrictCodes = queryCityDistrictCodes;
+window.deleteCanceledOrder    = deleteCanceledOrder;
+
+window.printSiparis         = printSiparis;
+window.barkodBas            = barkodBas;
 
 /* ============================================================
    BAŞLAT
 ============================================================ */
+loadOrders(true);
