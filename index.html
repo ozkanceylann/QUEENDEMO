@@ -156,18 +156,23 @@
   <script src="app.js"></script>
 
   <!-- LOGO & BAŞLIK & İLK YÜKLEME -->
-  <script type="module">
-    document.addEventListener("DOMContentLoaded", async () => {
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
 
-      await window.waitConfig();
+  await window.waitConfig();
 
-      document.getElementById("brandLogo").src = CONFIG.logo;
-      document.getElementById("brandTitle").innerHTML =
-        CONFIG.brandName + "<br/>Sipariş Sistemi";
+  document.getElementById("brandLogo").src = CONFIG.logo;
+  document.getElementById("brandTitle").innerHTML =
+    CONFIG.brandName + "<br/>Sipariş Sistemi";
 
-      loadOrders(true);
-    });
-  </script>
+  if (window.loadOrders) {
+    window.loadOrders(true);
+  } else {
+    console.error("loadOrders bulunamadı!");
+  }
+});
+</script>
+
 
 </body>
 </html>
