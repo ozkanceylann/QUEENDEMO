@@ -648,54 +648,93 @@ async function enterEditMode(){
   const districts = selectedCityId ? await loadDistricts(selectedCityId) : [];
   const selectedDistrictId = findDistrictIdForOrder(d, districts);
 
-  document.getElementById("orderDetails").innerHTML = `
-    <div class="edit-card">
-      <div class="edit-card__header">
-        <div>
-          <p class="eyebrow">Sipariş No</p>
-          <p class="title">${d.siparis_no}</p>
-        </div>
-        <div class="pill">Durum: ${d.kargo_durumu}</div>
+document.getElementById("orderDetails").innerHTML = `
+  <div class="detail-group">
+    <div class="detail-title">Genel Bilgiler</div>
+
+    <div class="detail-item">
+      <b>No</b> <div class="detail-value">${d.siparis_no}</div>
+    </div>
+
+    <div class="detail-item">
+      <b>İsim</b> <div class="detail-value">${d.ad_soyad}</div>
+    </div>
+
+    <div class="detail-item">
+      <b>Sipariş Alan</b> <div class="detail-value">${d.siparis_alan ?? "-"}</div>
+    </div>
+  </div>
+
+
+  <div class="detail-group">
+    <div class="detail-title">İletişim</div>
+
+    <div class="detail-item">
+      <b>Sipariş Tel</b> <div class="detail-value">${d.siparis_tel}</div>
+    </div>
+
+    <div class="detail-item">
+      <b>Müşteri Tel</b> <div class="detail-value">${d.musteri_tel}</div>
+    </div>
+  </div>
+
+
+  <div class="detail-group">
+    <div class="detail-title">Adres Bilgileri</div>
+
+    <div class="detail-item">
+      <b>Adres</b> <div class="detail-value">${d.adres}</div>
+    </div>
+
+    <div class="detail-item">
+      <b>Şehir / İlçe</b>
+      <div class="detail-value">
+        ${d.sehir} / ${d.ilce}
+        <button class="btn-mini" onclick="queryCityDistrictCodes()">Sor</button>
       </div>
+    </div>
 
-      <div class="edit-grid">
-        <div class="form-field"><label>Ad Soyad</label><input id="ad_soyad" value="${d.ad_soyad??""}"></div>
-        <div class="form-field"><label>Sipariş Tel</label><input id="siparis_tel" value="${d.siparis_tel??""}"></div>
-        <div class="form-field"><label>Müşteri Tel</label><input id="musteri_tel" value="${d.musteri_tel??""}"></div>
+    <div class="detail-item">
+      <b>Kodlar</b>
+      <div class="detail-value">${d.sehir_kodu ?? "-"} / ${d.ilce_kodu ?? "-"}</div>
+    </div>
+  </div>
 
-        <div class="form-field full-row"><label>Adres</label><textarea id="adres">${d.adres??""}</textarea></div>
 
-        <div class="form-field">
-          <label>Şehir</label>
-          <select id="sehir_select"></select>
-          <input id="sehir" type="hidden" value="${d.sehir ?? ""}">
-        </div>
+  <div class="detail-group">
+    <div class="detail-title">Ürün Bilgisi</div>
 
-        <div class="form-field">
-          <label>İlçe</label>
-          <select id="ilce_select"></select>
-          <input id="ilce" type="hidden" value="${d.ilce ?? ""}">
-        </div>
+    <div class="detail-item">
+      <b>Ürün</b> <div class="detail-value">${parseProduct(d.urun_bilgisi)}</div>
+    </div>
 
-        <div class="form-field">
-          <label>Şehir Kodu</label>
-          <input id="sehir_kodu" class="input-ghost" value="${d.sehir_kodu ?? ""}" readonly>
-        </div>
+    <div class="detail-item">
+      <b>Adet</b> <div class="detail-value">${d.kargo_adet ?? "-"}</div>
+    </div>
 
-        <div class="form-field">
-          <label>İlçe Kodu</label>
-          <input id="ilce_kodu" class="input-ghost" value="${d.ilce_kodu ?? ""}" readonly>
-        </div>
+    <div class="detail-item">
+      <b>KG</b> <div class="detail-value">${d.kargo_kg ?? "-"}</div>
+    </div>
 
-        <div class="form-field"><label>Kargo Adet</label><input id="kargo_adet" value="${d.kargo_adet??""}"></div>
-        <div class="form-field"><label>Kargo KG</label><input id="kargo_kg" value="${d.kargo_kg??""}"></div>
+    <div class="detail-item">
+      <b>Tutar</b> <div class="detail-value">${d.toplam_tutar} TL</div>
+    </div>
 
-        <div class="form-field full-row"><label>Ürün</label><textarea id="urun_bilgisi">${d.urun_bilgisi??""}</textarea></div>
-        <div class="form-field"><label>Tutar</label><input id="toplam_tutar" value="${d.toplam_tutar??""}"></div>
-        <div class="form-field"><label>Ödeme</label><input id="odeme_sekli" value="${d.odeme_sekli??""}"></div>
-        <div class="form-field full-row"><label>Not</label><textarea id="notlar">${d.notlar??""}</textarea></div>
-      </div>
-    </div>`;
+    <div class="detail-item">
+      <b>Ödeme</b> <div class="detail-value">${d.odeme_sekli}</div>
+    </div>
+  </div>
+
+
+  <div class="detail-group">
+    <div class="detail-title">Not</div>
+
+    <div class="detail-item">
+      <b>Not</b> <div class="detail-value">${d.notlar ?? "-"}</div>
+    </div>
+  </div>
+`;
+
 
   renderOptions(document.getElementById("sehir_select"), cities, {
     placeholder: "Şehir seçiniz",
