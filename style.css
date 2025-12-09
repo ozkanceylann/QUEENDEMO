@@ -630,6 +630,14 @@ body.login-page {
 ============================================ */
 
 /* Sipariş Detayı başlığı – daha küçük ve sık */
+.btn-primary   { --btn-color: #3c8d0d; }   /* Yeşil */
+.btn-secondary { --btn-color: #0d6efd; }   /* Mavi */
+.btn-warning   { --btn-color: #ffc107; color:#000 !important; }
+.btn-danger    { --btn-color: #d9534f; }
+.btn-waiting   { --btn-color: #6c757d; }
+.btn-close     { --btn-color: #999; color:#000 !important; }
+
+
 .modal h2 {
   font-size: 17px !important;
   margin: 0 0 8px !important;
@@ -639,35 +647,36 @@ body.login-page {
   letter-spacing: .2px;
 }
 
-/* Buton bar – koyu cam */
 #actionButtons,
 #editButtons,
 #restoreButtons {
   position: sticky;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.18) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
+  background: transparent !important;   /* ARKA ALAN TAMAMEN ŞEFFAF */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   padding: 14px 10px;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border: none !important;              /* ÇERÇEVE DE YOK */
   display: flex;
   gap: 10px;
   z-index: 50;
 }
 
-/* Butonlar – gerçek iOS cam */
 #actionButtons button,
 #editButtons button,
 #restoreButtons button {
-  background: rgba(255,255,255,0.25) !important;
-  backdrop-filter: blur(18px) !important;
-  -webkit-backdrop-filter: blur(18px) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+
+  /* Butonun kendi rengini koru */
+  background: var(--btn-color, rgba(255,255,255,0.2)) !important;
+
   border: none !important;
   color: #fff !important;
-  font-weight: 600;
   border-radius: 14px !important;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
-  transition: .2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+  transition: .15s;
 }
+
 
 
