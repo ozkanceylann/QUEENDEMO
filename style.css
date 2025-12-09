@@ -525,67 +525,90 @@ body.login-page {
 }
 
 /* ============================================
-   🍏 APPLE STYLE CARD POPUP — FINAL OVERRIDE
-   Bu selector daha güçlü olduğu için eski modal-content'i ezer.
+   ⭐ PROFESYONEL DATA-TABLE GELİŞTİRMELERİ ⭐
 ============================================ */
 
-body .modal .modal-content {
-  width: 430px !important;
-  max-height: 78vh !important;
-  min-height: auto !important;
+/* === Sticky Table Header === */
+.table-wrapper {
+  position: relative;
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  border-radius: 12px;
+}
 
+.orders-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #e9eff4 !important;
+  border-bottom: 1px solid #d0d8df !important;
+}
+
+/* === Zebra Satır === */
+.orders-table tbody tr:nth-child(odd) {
+  background: #fafafa;
+}
+.orders-table tbody tr:nth-child(even) {
   background: #ffffff;
-  border-radius: 20px !important;
-
-  padding: 22px 26px !important;
-  overflow-y: auto !important;
-
-  box-shadow:
-    0 25px 60px rgba(0,0,0,0.25),
-    0 8px 20px rgba(0,0,0,0.12);
-
-  /* Apple Card Popup Animasyonu */
-  transform: scale(0.90) translateY(25px);
-  opacity: 0;
-  animation: appleCardIn 0.28s cubic-bezier(.18,.89,.32,1.28) forwards;
 }
 
-/* Modal ortalansın */
-body .modal {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding-top: 0 !important;
+/* === Satır Hover === */
+.orders-table tbody tr:hover {
+  background: #dff0df !important;
+  box-shadow: inset 4px 0 var(--brand);
+  transition: 0.15s ease-in-out;
 }
 
-/* Apple animasyonu */
-@keyframes appleCardIn {
-  from {
-    opacity: 0;
-    transform: scale(0.88) translateY(35px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+/* === Satır Seçili Efekti (Modal Açıldığında) === */
+.orders-table tbody tr.selected {
+  background: #c7eac7 !important;
+  box-shadow: inset 4px 0 var(--brand);
 }
 
-/* Scrollbar ince */
-body .modal .modal-content::-webkit-scrollbar {
-  width: 6px;
-}
-body .modal .modal-content::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 4px;
+/* === Durum Etiketleri (Kargo Durumu ve shipmentStatus) === */
+.status-pill {
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+  text-transform: capitalize;
 }
 
-/* X butonu Apple hissiyatında olsun */
-.modal-content .close {
-  font-size: 22px !important;
-  color: #666 !important;
-  transition: 0.2s;
+.status-bekliyor   { background: #fff3cd; color: #856404; }
+.status-hazirlandi { background: #cce5ff; color: #004085; }
+.status-kargolandi { background: #d4edda; color: #155724; }
+.status-sorunlu    { background: #f8d7da; color: #721c24; }
+.status-iptal      { background: #f5c6cb; color: #721c24; }
+.status-tamamlandi { background: #d1ecf1; color: #0c5460; }
+
+/* === "Aç / Sorgula" butonu daraltma === */
+.btn-open {
+  padding: 4px 7px !important;
+  font-size: 11px !important;
+  border-radius: 6px !important;
 }
-.modal-content .close:hover {
-  color: #000 !important;
-  transform: scale(1.15);
+
+/* === Error-chip küçültme === */
+.error-chip {
+  padding: 3px 5px !important;
+  max-width: 140px !important;
+  font-size: 10.5px !important;
 }
+
+.error-chip__text {
+  font-size: 10.5px !important;
+}
+
+/* === Tüm tablo daha kompakt === */
+.orders-table th,
+.orders-table td {
+  padding: 6px 8px !important;
+  font-size: 12px !important;
+  height: 30px !important;
+  line-height: 1.25 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
