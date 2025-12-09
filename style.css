@@ -537,7 +537,10 @@ body.login-page {
 
   width: 520px !important;
   max-height: 90vh !important;
+  
+  /* --- ÖNEMLİ: İçerik kayacak, butonlar sabit kalacak --- */
   overflow-y: auto !important;
+  padding-bottom: 110px !important; /* buton barı için yer aç */
 
   transform: scale(0.97);
   animation: fadeIn .25s ease-out;
@@ -591,4 +594,33 @@ body.login-page {
 }
 .close:hover {
   color: #000;
+}
+
+/* ============================================================
+   BUTON BAR (SORUNU ÇÖZEN KISIM) – Sabitleme
+=========================================================== */
+
+#actionButtons,
+#editButtons,
+#restoreButtons {
+  position: sticky;
+  bottom: 0;
+
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  padding: 14px 10px;
+  border-top: 1px solid #dfe6ee;
+  
+  display: flex;
+  gap: 10px;
+  z-index: 50;
+}
+
+#actionButtons button,
+#editButtons button,
+#restoreButtons button {
+  flex: 1;
+  min-width: 0;
 }
