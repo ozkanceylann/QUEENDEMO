@@ -614,70 +614,67 @@ body.login-page {
 
 
 /* ============================================
-   🍏 CARD POPUP – modern modal tasarımı
+   🍏 APPLE STYLE CARD POPUP — FINAL OVERRIDE
+   Bu selector daha güçlü olduğu için eski modal-content'i ezer.
 ============================================ */
 
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(6px);          /* blur efekti */
-  
-  display: flex;
-  align-items: center;                 /* TAM ORTA */
-  justify-content: center;
-}
-
-.modal-content {
-  width: 420px !important;
-  max-height: 82vh !important;
+body .modal .modal-content {
+  width: 430px !important;
+  max-height: 78vh !important;
+  min-height: auto !important;
 
   background: #ffffff;
-  border-radius: 18px !important;
+  border-radius: 20px !important;
 
-  padding: 24px !important;
+  padding: 22px 26px !important;
   overflow-y: auto !important;
 
-  box-shadow: 0 18px 60px rgba(0,0,0,0.28),
-              0 6px 18px rgba(0,0,0,0.18);
+  box-shadow:
+    0 25px 60px rgba(0,0,0,0.25),
+    0 8px 20px rgba(0,0,0,0.12);
 
-  transform: scale(0.90) translateY(15px);
+  /* Apple Card Popup Animasyonu */
+  transform: scale(0.90) translateY(25px);
   opacity: 0;
-  animation: cardPopup 0.28s ease-out forwards;
+  animation: appleCardIn 0.28s cubic-bezier(.18,.89,.32,1.28) forwards;
 }
 
-/* Card açılış animasyonu */
-@keyframes cardPopup {
+/* Modal ortalansın */
+body .modal {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding-top: 0 !important;
+}
+
+/* Apple animasyonu */
+@keyframes appleCardIn {
   from {
     opacity: 0;
-    transform: scale(0.90) translateY(20px);
+    transform: scale(0.88) translateY(35px);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0px);
+    transform: scale(1) translateY(0);
   }
 }
 
-/* Scrollbar yumuşatma */
-.modal-content::-webkit-scrollbar {
+/* Scrollbar ince */
+body .modal .modal-content::-webkit-scrollbar {
   width: 6px;
 }
-.modal-content::-webkit-scrollbar-thumb {
+body .modal .modal-content::-webkit-scrollbar-thumb {
   background: #ccc;
-  border-radius: 5px;
+  border-radius: 4px;
 }
 
-/* X kapatma butonu daha modern görünsün */
-.close {
+/* X butonu Apple hissiyatında olsun */
+.modal-content .close {
   font-size: 22px !important;
   color: #666 !important;
   transition: 0.2s;
 }
-.close:hover {
+.modal-content .close:hover {
   color: #000 !important;
   transform: scale(1.15);
 }
-
