@@ -832,32 +832,43 @@ console.log("N8N cevabı:", data);
 
 }
 
-async function printBarcode(){
+async function printBarcode() {
+
   const ok = await confirmModal({
-    title:"Barkod Kes",
-    text:"Barkod isteği gönderilecek.",
-    confirmText:"Gönder",
-    cancelText:"Vazgeç"
+    title: "Barkod Kes",
+    text: "Barkod dosyası Supabase'den alınarak açılacak.",
+    confirmText: "Aç",
+    cancelText: "Vazgeç"
   });
-  if(!ok) return;
+  if (!ok) return;
 
-  const key = selectedOrder.siparis_no;
-  if(busy.barkod.has(key)) return toast("Barkod zaten bekliyor");
-  busy.barkod.add(key);
+  // Siparişi Supabase’den tekrar çekiyoruz ki barkod_base64 en güncel olsun
+  const { data, error } = await db
+    .from(TABLE)
+    .select("barkod_base64")
+    .eq("siparis_no", selectedOrder.siparis_no)
+    .single();
 
-  try{
-    await fetch(WH_BARKOD, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(selectedOrder)
-    });
-    toast("Barkod gönderildi");
-  }catch(e){
-    toast("Barkod hatası!");
-  }finally{
-    setTimeout(()=>busy.barkod.delete(key), 20000);
+  if (error) {
+    toast("Barkod alınamadı: " + error.message);
+    return;
   }
+
+  const base64 = data?.barkod_base64;
+  if (!base64) {
+    toast("Bu sipariş için barkod bulunamadı!");
+    return;
+  }
+
+  // İçeriği PNG veya PDF olarak direkt açıyoruz
+  const mimeType = base64.trim().startsWith("JVBER") 
+    ? "application/pdf"   // PDF base64 signature: JVBER...
+    : "image/png";        // Diğer tüm durumlarda PNG varsayalım
+
+  const url = `data:${mimeType};base64,${base64}`;
+  window.open(url, "_blank");
 }
+
 
 /* ============================================================
    İPTAL / GERİ AL
