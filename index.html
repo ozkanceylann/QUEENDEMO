@@ -93,31 +93,30 @@
 
 
 
-  <!-- MODAL -->
-  <div id="orderModal" class="modal">
-    <div class="modal-content">
+<div id="orderModal" class="modal">
+  <div class="modal-content">
 
-      <span class="close" onclick="closeModal()">&times;</span>
+    <div class="modal-header">
       <h2>Sipariş Detayı</h2>
+      <span class="close" onclick="closeModal()">&times;</span>
+    </div>
 
-      <div id="orderDetails"></div>
+    <div class="modal-body" id="orderDetails">
+      <!-- JS ile dolduruluyor -->
+    </div>
 
-<div id="actionButtons" class="modal-btns">
+    <div class="modal-footer" id="actionButtons">
+      <button id="btnPrepare" class="btn-primary" onclick="markPrepared()">Hazırla</button>
+      <button id="btnCargo" class="btn-secondary" onclick="sendToCargo()">Kargola</button>
+      <button id="btnWaiting" class="btn-waiting" onclick="setWaiting()">Bekliyor</button>
+      <button id="btnBarcode" class="btn-primary" onclick="printBarcode()">Barkod</button>
+      <button class="btn-danger" onclick="openCancelForm()">İptal</button>
+      <button class="btn-close" onclick="closeModal()">Kapat</button>
+    </div>
 
-    <button id="btnPrepare" class="btn-primary" onclick="markPrepared()">Hazırla</button>
-    <button id="btnCargo" class="btn-secondary" onclick="sendToCargo()">Kargola</button>
-    <button id="btnWaiting" class="btn-waiting" onclick="setWaiting()">Bekliyor</button>
-    <button id="btnBarcode" class="btn-primary" style="display:none;" onclick="printBarcode()">Barkod Kes</button>
-
-    <button class="btn-warning" onclick="enterEditMode()">Düzenle</button>
-
-    <!-- İPTAL ET (ÜST SATIR) -->
-    <button class="btn-danger" onclick="openCancelForm()">İptal Et</button>
-
-    <!-- KAPAT (ALT SATIR) -->
-    <button class="btn-close" onclick="closeModal()">Kapat</button>
-
+  </div>
 </div>
+
 
       <!-- Edit Butonları -->
       <div id="editButtons" class="modal-btns" style="display:none;">
