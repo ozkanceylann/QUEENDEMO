@@ -703,4 +703,27 @@ body.login-page {
   color: #000;
 }
 
+/* ================================
+   EDIT BUTONLARI TEK SATIR DÜZENİ
+================================ */
+#editButtons {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 10px !important;
+  width: 100%;
+}
+
+#editButtons button {
+  flex: 1 !important;
+  min-width: 0 !important;
+  height: 44px;
+}
+
+/* Önceden verilmiş order kurallarını sıfırla */
+#editButtons .btn-primary,
+#editButtons .btn-danger,
+#editButtons .btn-close {
+  order: unset !important;
+  flex-basis: auto !important;
+}
 
