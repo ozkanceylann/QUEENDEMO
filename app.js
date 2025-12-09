@@ -423,6 +423,19 @@ document.getElementById("orderDetails").innerHTML = `
   </div>
 `;
 
+
+   // Modal dışına tıklayınca kapat
+document.addEventListener("click", function (e) {
+  const modal = document.getElementById("orderModal");
+  const content = document.querySelector(".modal-content");
+
+  if (modal.style.display === "flex") {
+    if (!content.contains(e.target)) {
+      closeModal();
+    }
+  }
+});
+
   /* ============================================================
       1) SOR BUTONU — SADECE Bekliyor & Hazırlandı
   ============================================================ */
