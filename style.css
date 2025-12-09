@@ -260,3 +260,10 @@ body {
   .content-area { margin-left: 0; padding-top: 70px; }
   .edit-grid { grid-template-columns: 1fr; }
 }
+
+.logo, .sidebar-logo, img.logo {
+    max-width: 140px !important;
+    height: auto !important;
+    display: block;
+}
+
