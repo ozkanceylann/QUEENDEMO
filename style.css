@@ -524,121 +524,71 @@ body.login-page {
   display: none;
 }
 
-/* ============================================
-   PREMIUM iOS STYLE MODAL (YENİ TASARIM)
-============================================ */
+/* ================================================
+   SİPARİŞ DETAYI – PREMIUM GRUPLU TASARIM
+=================================================== */
+
 .modal-content {
-  width: 560px !important;
-  max-height: 94vh !important;
-  min-height: 720px !important;
+  background: linear-gradient(to bottom right, #ffffff, #f4f7fb);
+  border: 1px solid #dfe6ee;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.20);
+  padding: 28px;
+  border-radius: 20px;
+
+  width: 520px !important;
+  max-height: 90vh !important;
   overflow-y: auto !important;
 
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-
-  padding: 30px 28px 22px;
-  border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-
-  box-shadow:
-    0 18px 50px rgba(0,0,0,0.20),
-    0 6px 20px rgba(0,0,0,0.10);
-
-  transform: translateY(-10px) scale(0.98);
-  animation: modalPop .25s ease forwards;
+  transform: scale(0.97);
+  animation: fadeIn .25s ease-out;
 }
 
-@keyframes modalPop {
-  from { transform: translateY(0) scale(0.95); opacity: 0; }
-  to   { transform: translateY(-10px) scale(1); opacity: 1; }
-}
-
-/* Modal kapatma X butonu */
-.modal .close {
-  font-size: 26px;
-  color: #666;
-  opacity: 0.8;
-  transition: 0.2s;
-}
-.modal .close:hover {
-  opacity: 1;
-}
-
-
-/* ============================================
-   YAZI VE ALAN KÜÇÜLTME (KOMPAKT TASARIM)
-============================================ */
 #orderDetails {
-  font-size: 14px;
-  line-height: 1.40;
+  font-size: 13px;
+  line-height: 1.35;
+  color: #123;
 }
 
-#orderDetails p {
-  margin: 6px 0;
-}
-
-#orderDetails b {
-  color: #1a2b4c;
-  font-weight: 700;
-}
-
-
-/* ============================================
-   KART GÖRÜNÜMLÜ GRUPLAR (iOS style)
-============================================ */
-.detail-card {
-  background: #ffffffd9;
+/* Grup kutuları */
+.detail-group {
+  background: #f9fbfd;
+  border: 1px solid #e0e6ed;
+  border-radius: 14px;
   padding: 16px 18px;
-  border-radius: 18px;
   margin-bottom: 16px;
-
-  border: 1px solid #e5e8ef;
-  box-shadow: 0 6px 22px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 18px rgba(0,0,0,.06);
 }
 
-.detail-card h3 {
-  margin: 0 0 10px;
-  font-size: 15px;
+.detail-title {
+  font-size: 14px;
   font-weight: 700;
+  margin-bottom: 10px;
   color: #0d2451;
 }
 
-
-/* ============================================
-   SOR butonu düzenleme
-============================================ */
-.btn-mini {
-  padding: 4px 9px !important;
-  font-size: 11px !important;
-  border-radius: 6px;
+.detail-item {
+  font-size: 13px;
+  margin: 5px 0;
 }
 
-
-/* ============================================
-   BUTON GRUBU (alta yapışık değil)
-============================================ */
-.modal-btns {
-  margin-top: 20px !important;
-  padding-top: 14px !important;
-  border-top: 1px solid #dfe6ee80 !important;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+.detail-item b {
+  color: #183153;
 }
 
-.modal-btns button {
-  flex: 1;
-  min-width: 110px;
+/* Başlık */
+.modal h2 {
+  font-size: 20px;
+  letter-spacing: 0.5px;
+  margin-bottom: 18px;
+  color: var(--brand);
 }
 
-/* Kapat ve iptal butonu özel */
-.modal-btns .btn-close {
-  background: #d9d9d9 !important;
-  color: #000 !important;
+/* Close X */
+.close {
+  font-size: 24px;
+  color: #666;
+  transition: .2s;
 }
-
-.modal-btns .btn-danger {
-  background: #d9534f !important;
-  color: #fff !important;
+.close:hover {
+  color: #000;
 }
