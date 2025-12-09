@@ -684,26 +684,3 @@ body.login-page {
 #editButtons .btn-danger,
 #restoreButtons .btn-danger { --btn-color: var(--danger); color:#fff !important; }
 
-.modal-content {
-  padding-bottom: 65px !important;
-}
-
-#actionButtons,
-#editButtons,
-#restoreButtons {
-  bottom: 0 !important;
-  margin-bottom: 0 !important;
-}
-
-@supports (-webkit-touch-callout: none) {
-  #actionButtons,
-  #editButtons,
-  #restoreButtons {
-    position: fixed !important;
-    left: 0;
-    right: 0;
-    bottom: 0 !important;
-    padding: 12px 14px !important;
-    z-index: 9999 !important;
-  }
-
