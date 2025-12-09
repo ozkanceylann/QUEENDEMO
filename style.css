@@ -525,109 +525,70 @@ body.login-page {
 }
 
 /* ================================================
-   APPLE STYLE CARD STACK — iOS Settings görünümü
+   SİPARİŞ DETAYI – PREMIUM GRUPLU TASARIM
 =================================================== */
 
-/* ============================
-   MODAL BACKDROP (Dışarı tıklama alanı)
-============================ */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  backdrop-filter: blur(4px);
-  display: none;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  z-index: 9999;
-}
-
-/* ============================
-   MODAL KUTUSU
-============================ */
 .modal-content {
-  width: 520px;
-  max-height: 85vh;
+  background: linear-gradient(to bottom right, #ffffff, #f4f7fb);
+  border: 1px solid #dfe6ee;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.20);
+  padding: 28px;
+  border-radius: 20px;
 
-  background: #f2f3f7;
-  border-radius: 22px;
+  width: 520px !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
 
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-
-  box-shadow: 0 20px 45px rgba(0,0,0,.28);
+  transform: scale(0.97);
   animation: fadeIn .25s ease-out;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px) scale(.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+#orderDetails {
+  font-size: 13px;
+  line-height: 1.35;
+  color: #123;
 }
 
-/* =============================
-   HEADER (Sabit üst bar)
-============================= */
-.modal-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 18px 22px;
-
-  background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(16px);
-
-  border-bottom: 1px solid rgba(0,0,0,.08);
+/* Grup kutuları */
+.detail-group {
+  background: #f9fbfd;
+  border: 1px solid #e0e6ed;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.06);
 }
 
-.modal-header h2 {
-  margin: 0;
+.detail-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #0d2451;
+}
+
+.detail-item {
+  font-size: 13px;
+  margin: 5px 0;
+}
+
+.detail-item b {
+  color: #183153;
+}
+
+/* Başlık */
+.modal h2 {
   font-size: 20px;
+  letter-spacing: 0.5px;
+  margin-bottom: 18px;
   color: var(--brand);
 }
 
-.modal-header .close {
-  font-size: 28px;
-  cursor: pointer;
-  color: #444;
+/* Close X */
+.close {
+  font-size: 24px;
+  color: #666;
   transition: .2s;
 }
-.modal-header .close:hover { color: #000; }
-
-/* =============================
-   BODY (Kaydırılabilir içerik)
-============================= */
-.modal-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 22px;
-}
-
-/* =============================
-   FOOTER (Sabit alt buton barı)
-============================= */
-.modal-footer {
-  position: sticky;
-  bottom: 0;
-  z-index: 20;
-
-  background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(18px);
-
-  border-top: 1px solid rgba(0,0,0,.08);
-
-  padding: 14px 18px;
-  display: flex;
-  gap: 10px;
-}
-
-.modal-footer button {
-  flex: 1;
+.close:hover {
+  color: #000;
 }
