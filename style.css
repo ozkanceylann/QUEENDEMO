@@ -525,68 +525,107 @@ body.login-page {
 }
 
 /* ================================================
-   SİPARİŞ DETAYI – PREMIUM GRUPLU TASARIM
+   APPLE STYLE CARD STACK — iOS Settings görünümü
 =================================================== */
 
 .modal-content {
-  background: linear-gradient(to bottom right, #ffffff, #f4f7fb);
-  border: 1px solid #dfe6ee;
-  box-shadow: 0 18px 50px rgba(0,0,0,0.20);
-  padding: 28px;
-  border-radius: 20px;
-
   width: 520px !important;
   max-height: 90vh !important;
   overflow-y: auto !important;
 
-  transform: scale(0.97);
+  padding: 22px 20px 40px;
+  border-radius: 22px;
+
+  background: #f2f3f7; /* iOS açık gri */
+  box-shadow: 0 16px 40px rgba(0,0,0,.18);
+
   animation: fadeIn .25s ease-out;
+  transform: scale(.97);
 }
 
-#orderDetails {
-  font-size: 13px;
-  line-height: 1.35;
-  color: #123;
-}
-
-/* Grup kutuları */
+/* Kart grupları */
 .detail-group {
-  background: #f9fbfd;
-  border: 1px solid #e0e6ed;
-  border-radius: 14px;
-  padding: 16px 18px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 18px rgba(0,0,0,.06);
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 0;                 /* apple tarzı: iç padding yok */
+  margin-bottom: 22px;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(0,0,0,.05);
+  border: 1px solid rgba(0,0,0,.05);
 }
 
+/* Grup başlığı */
 .detail-title {
+  padding: 12px 16px;
   font-size: 14px;
   font-weight: 700;
-  margin-bottom: 10px;
-  color: #0d2451;
+  color: #6c7280;
+  background: #f7f8fa;
+  border-bottom: 1px solid rgba(0,0,0,.06);
 }
 
+/* Her satır - iOS style row */
 .detail-item {
-  font-size: 13px;
-  margin: 5px 0;
+  padding: 14px 16px;
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
 }
 
+/* Sol label */
 .detail-item b {
-  color: #183153;
+  font-weight: 600;
+  color: #1a1c1f;
+  min-width: 140px;
+  display: inline-block;
+}
+
+/* Sağdaki değer */
+.detail-value {
+  color: #444;
+  text-align: right;
+  flex: 1;
+}
+
+/* Aradaki ince çizgi */
+.detail-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(0,0,0,.05);
+}
+
+/* Sağdaki iOS Arrow */
+.detail-arrow {
+  width: 10px;
+  margin-left: 10px;
+  opacity: 0.4;
+}
+
+/* Sor butonu Apple tarzı küçük badge */
+.btn-mini {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 8px;
 }
 
 /* Başlık */
 .modal h2 {
   font-size: 20px;
-  letter-spacing: 0.5px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
+  letter-spacing: .3px;
   color: var(--brand);
 }
 
 /* Close X */
 .close {
-  font-size: 24px;
-  color: #666;
+  font-size: 26px;
+  color: #777;
   transition: .2s;
 }
 .close:hover {
