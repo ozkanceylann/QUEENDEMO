@@ -639,35 +639,35 @@ body.login-page {
   letter-spacing: .2px;
 }
 
-/* Modal kartını daha oval ve daha kompakt yap */
-.modal-content {
-  border-radius: 28px !important;    /* daha oval */
-  padding-top: 16px !important;      /* üst boşluğu küçült */
-  padding-left: 26px !important;
-  padding-right: 26px !important;
-}
-
-/* iOS glass morphism butonları */
+/* Buton bar – koyu cam */
 #actionButtons,
 #editButtons,
 #restoreButtons {
+  position: sticky;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.18) !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
+  padding: 14px 10px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  gap: 10px;
+  z-index: 50;
 }
 
-  border: none !important;           /* ÇERÇEVE TAMAMEN KALDIRILDI */
-  color: #fff !important;            /* yazılar beyaz */
-  font-weight: 600;
-
-  box-shadow: 0 0 18px rgba(0,0,0,0.12);
-  transition: .2s;
-}
-
+/* Butonlar – gerçek iOS cam */
 #actionButtons button,
 #editButtons button,
 #restoreButtons button {
   background: rgba(255,255,255,0.25) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: 14px !important;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+  transition: .2s;
 }
 
 
