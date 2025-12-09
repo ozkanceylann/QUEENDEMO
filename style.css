@@ -524,16 +524,3 @@ body.login-page {
   display: none;
 }
 
-/* === TÜM TABLOLARDA BEKLEYEN İLE AYNI SATIR YÜKSEKLİĞİ === */
-.orders-table td,
-.orders-table th {
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-    height: 38px !important;
-    line-height: 16px !important;
-}
-
-.orders-table tbody tr {
-    height: 38px !important;
-}
-
