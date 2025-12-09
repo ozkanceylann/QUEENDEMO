@@ -648,40 +648,54 @@ async function enterEditMode(){
   const districts = selectedCityId ? await loadDistricts(selectedCityId) : [];
   const selectedDistrictId = findDistrictIdForOrder(d, districts);
 
-document.getElementById("orderDetails").innerHTML = `
-  <div class="detail-card">
-    <h3>Genel Bilgiler</h3>
-    <p><b>No:</b> ${d.siparis_no}</p>
-    <p><b>İsim:</b> ${d.ad_soyad}</p>
-    <p><b>Sipariş Alan:</b> ${d.siparis_alan ?? "-"}</p>
-    <p><b>Sipariş Alan Tel:</b> ${d.siparis_tel}</p>
-    <p><b>Müşteri Tel:</b> ${d.musteri_tel}</p>
-  </div>
+  document.getElementById("orderDetails").innerHTML = `
+    <div class="edit-card">
+      <div class="edit-card__header">
+        <div>
+          <p class="eyebrow">Sipariş No</p>
+          <p class="title">${d.siparis_no}</p>
+        </div>
+        <div class="pill">Durum: ${d.kargo_durumu}</div>
+      </div>
 
-  <div class="detail-card">
-    <h3>Adres Bilgileri</h3>
-    <p><b>Adres:</b> ${d.adres}</p>
-    <p><b>Şehir / İlçe:</b> ${d.sehir} / ${d.ilce}
-       <button class="btn-mini" onclick="queryCityDistrictCodes()">Sor</button>
-    </p>
-    <p><small>Kodlar: ${d.sehir_kodu ?? "-"} / ${d.ilce_kodu ?? "-"}</small></p>
-  </div>
+      <div class="edit-grid">
+        <div class="form-field"><label>Ad Soyad</label><input id="ad_soyad" value="${d.ad_soyad??""}"></div>
+        <div class="form-field"><label>Sipariş Tel</label><input id="siparis_tel" value="${d.siparis_tel??""}"></div>
+        <div class="form-field"><label>Müşteri Tel</label><input id="musteri_tel" value="${d.musteri_tel??""}"></div>
 
-  <div class="detail-card">
-    <h3>Ürün Bilgisi</h3>
-    <p><b>Ürün:</b> ${parseProduct(d.urun_bilgisi)}</p>
-    <p><b>Adet:</b> ${d.kargo_adet ?? "-"}</p>
-    <p><b>KG:</b> ${d.kargo_kg ?? "-"}</p>
-    <p><b>Tutar:</b> ${d.toplam_tutar} TL</p>
-    <p><b>Ödeme:</b> ${d.odeme_sekli}</p>
-  </div>
+        <div class="form-field full-row"><label>Adres</label><textarea id="adres">${d.adres??""}</textarea></div>
 
-  <div class="detail-card">
-    <h3>Not</h3>
-    <p>${d.notlar ?? "-"}</p>
-  </div>
-`;
+        <div class="form-field">
+          <label>Şehir</label>
+          <select id="sehir_select"></select>
+          <input id="sehir" type="hidden" value="${d.sehir ?? ""}">
+        </div>
 
+        <div class="form-field">
+          <label>İlçe</label>
+          <select id="ilce_select"></select>
+          <input id="ilce" type="hidden" value="${d.ilce ?? ""}">
+        </div>
+
+        <div class="form-field">
+          <label>Şehir Kodu</label>
+          <input id="sehir_kodu" class="input-ghost" value="${d.sehir_kodu ?? ""}" readonly>
+        </div>
+
+        <div class="form-field">
+          <label>İlçe Kodu</label>
+          <input id="ilce_kodu" class="input-ghost" value="${d.ilce_kodu ?? ""}" readonly>
+        </div>
+
+        <div class="form-field"><label>Kargo Adet</label><input id="kargo_adet" value="${d.kargo_adet??""}"></div>
+        <div class="form-field"><label>Kargo KG</label><input id="kargo_kg" value="${d.kargo_kg??""}"></div>
+
+        <div class="form-field full-row"><label>Ürün</label><textarea id="urun_bilgisi">${d.urun_bilgisi??""}</textarea></div>
+        <div class="form-field"><label>Tutar</label><input id="toplam_tutar" value="${d.toplam_tutar??""}"></div>
+        <div class="form-field"><label>Ödeme</label><input id="odeme_sekli" value="${d.odeme_sekli??""}"></div>
+        <div class="form-field full-row"><label>Not</label><textarea id="notlar">${d.notlar??""}</textarea></div>
+      </div>
+    </div>`;
 
   renderOptions(document.getElementById("sehir_select"), cities, {
     placeholder: "Şehir seçiniz",
