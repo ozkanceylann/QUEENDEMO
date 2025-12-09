@@ -648,12 +648,13 @@ body.login-page {
 }
 
 /* iOS glass morphism butonları */
-#actionButtons button,
-#editButtons button,
-#restoreButtons button {
-  background: rgba(255,255,255,0.15) !important;     /* yarı saydam */
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
+#actionButtons,
+#editButtons,
+#restoreButtons {
+  background: rgba(0, 0, 0, 0.18) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
 
   border: none !important;           /* ÇERÇEVE TAMAMEN KALDIRILDI */
   color: #fff !important;            /* yazılar beyaz */
@@ -663,10 +664,10 @@ body.login-page {
   transition: .2s;
 }
 
-#actionButtons button:hover,
-#editButtons button:hover,
-#restoreButtons button:hover {
+#actionButtons button,
+#editButtons button,
+#restoreButtons button {
   background: rgba(255,255,255,0.25) !important;
-  transform: translateY(-1px);
 }
+
 
