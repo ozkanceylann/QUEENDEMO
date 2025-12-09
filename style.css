@@ -528,106 +528,106 @@ body.login-page {
    APPLE STYLE CARD STACK — iOS Settings görünümü
 =================================================== */
 
-.modal-content {
-  width: 520px !important;
-  max-height: 90vh !important;
-  overflow-y: auto !important;
+/* ============================
+   MODAL BACKDROP (Dışarı tıklama alanı)
+============================ */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(4px);
+  display: none;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  z-index: 9999;
+}
 
-  padding: 22px 20px 40px;
+/* ============================
+   MODAL KUTUSU
+============================ */
+.modal-content {
+  width: 520px;
+  max-height: 85vh;
+
+  background: #f2f3f7;
   border-radius: 22px;
 
-  background: #f2f3f7; /* iOS açık gri */
-  box-shadow: 0 16px 40px rgba(0,0,0,.18);
-
-  animation: fadeIn .25s ease-out;
-  transform: scale(.97);
-}
-
-/* Kart grupları */
-.detail-group {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 0;                 /* apple tarzı: iç padding yok */
-  margin-bottom: 22px;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 4px 18px rgba(0,0,0,.05);
-  border: 1px solid rgba(0,0,0,.05);
+
+  box-shadow: 0 20px 45px rgba(0,0,0,.28);
+  animation: fadeIn .25s ease-out;
 }
 
-/* Grup başlığı */
-.detail-title {
-  padding: 12px 16px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #6c7280;
-  background: #f7f8fa;
-  border-bottom: 1px solid rgba(0,0,0,.06);
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Her satır - iOS style row */
-.detail-item {
-  padding: 14px 16px;
-  font-size: 15px;
+/* =============================
+   HEADER (Sabit üst bar)
+============================= */
+.modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: relative;
+
+  padding: 18px 22px;
+
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(16px);
+
+  border-bottom: 1px solid rgba(0,0,0,.08);
 }
 
-/* Sol label */
-.detail-item b {
-  font-weight: 600;
-  color: #1a1c1f;
-  min-width: 140px;
-  display: inline-block;
-}
-
-/* Sağdaki değer */
-.detail-value {
-  color: #444;
-  text-align: right;
-  flex: 1;
-}
-
-/* Aradaki ince çizgi */
-.detail-item:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  left: 16px;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: rgba(0,0,0,.05);
-}
-
-/* Sağdaki iOS Arrow */
-.detail-arrow {
-  width: 10px;
-  margin-left: 10px;
-  opacity: 0.4;
-}
-
-/* Sor butonu Apple tarzı küçük badge */
-.btn-mini {
-  padding: 4px 8px;
-  font-size: 11px;
-  border-radius: 8px;
-}
-
-/* Başlık */
-.modal h2 {
+.modal-header h2 {
+  margin: 0;
   font-size: 20px;
-  margin-bottom: 16px;
-  letter-spacing: .3px;
   color: var(--brand);
 }
 
-/* Close X */
-.close {
-  font-size: 26px;
-  color: #777;
+.modal-header .close {
+  font-size: 28px;
+  cursor: pointer;
+  color: #444;
   transition: .2s;
 }
-.close:hover {
-  color: #000;
+.modal-header .close:hover { color: #000; }
+
+/* =============================
+   BODY (Kaydırılabilir içerik)
+============================= */
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px;
+}
+
+/* =============================
+   FOOTER (Sabit alt buton barı)
+============================= */
+.modal-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(18px);
+
+  border-top: 1px solid rgba(0,0,0,.08);
+
+  padding: 14px 18px;
+  display: flex;
+  gap: 10px;
+}
+
+.modal-footer button {
+  flex: 1;
 }
