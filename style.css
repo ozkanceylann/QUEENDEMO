@@ -629,14 +629,6 @@ body.login-page {
    --- EKLEMEN GEREKEN PREMIUM iOS STİLLERİ ---
 ============================================ */
 
-/* Sipariş Detayı başlığı – daha küçük ve sık */
-.btn-primary   { --btn-color: #3c8d0d; }   /* Yeşil */
-.btn-secondary { --btn-color: #0d6efd; }   /* Mavi */
-.btn-warning   { --btn-color: #ffc107; color:#000 !important; }
-.btn-danger    { --btn-color: #d9534f; }
-.btn-waiting   { --btn-color: #6c757d; }
-.btn-close     { --btn-color: #999; color:#000 !important; }
-
 
 .modal h2 {
   font-size: 17px !important;
