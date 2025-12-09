@@ -408,41 +408,6 @@ canvas{ max-width:100% }
   order: 1;
 }
 
-/* ============================
-   SİPARİŞ DETAYI YENİ TASARIM
-============================ */
-.detail-group {
-  background: #f9fbfd;
-  border: 1px solid #e0e6ed;
-  border-radius: 14px;
-  padding: 16px 18px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 18px rgba(0,0,0,.06);
-}
-
-.detail-title {
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  color: #0d2451;
-}
-
-.detail-item {
-  margin: 6px 0;
-  font-size: 14px;
-}
-
-.detail-item b {
-  color: #183153;
-}
-
-.modal-content {
-  background: linear-gradient(to bottom right, #ffffff, #f4f7fb);
-  border: 1px solid #dfe6ee;
-  box-shadow: 0 18px 50px rgba(0,0,0,0.20);
-  padding: 28px;
-  border-radius: 20px;
-}
 
 /* =========================================
    YENİ BELIDO LOGIN TASARIMI (Örnekteki ile aynı)
