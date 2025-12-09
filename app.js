@@ -836,13 +836,13 @@ async function printBarcode() {
 
   const ok = await confirmModal({
     title: "Barkod Kes",
-    text: "Supabase'deki tüm barkodlar açılacak.",
+    text: "Supabase içerisindeki tüm barkod PDF/PNG verileri açılacak.",
     confirmText: "Aç",
     cancelText: "Vazgeç"
   });
   if (!ok) return;
 
-  // Supabase’den barkod verisini çek
+  // Supabase’den barkod datasını çek
   const { data, error } = await db
     .from(TABLE)
     .select("zpl_base64")
@@ -860,51 +860,50 @@ async function printBarcode() {
     return;
   }
 
-  // JSON ise parse etmeyi dene
   let list = [];
 
+  // JSON array parse ediliyor (senin format)
   try {
     const parsed = JSON.parse(raw);
 
+    // Beklenen format: [ { data: "BASE64..." }, { data: "..." } ]
     if (Array.isArray(parsed)) {
-      // Eğer direkt array ise
-      list = parsed;
-    } else if (parsed && parsed.labels && Array.isArray(parsed.labels)) {
-      // Eğer JSON içinde labels varsa
-      list = parsed.labels.map(x => x.data || x.base64 || x);
-    } else {
-      // JSON ama format farklıysa yine tek öğe gibi al
-      list = [raw];
+      list = parsed
+        .map(x => x?.data)   // her elemandan data alanını çek
+        .filter(x => !!x);   // boş olanları ele
     }
   } catch {
-    // JSON DEĞiL → tek base64 string
+    // JSON parse olmuyorsa tek base64 gibi davran
     list = [raw];
   }
 
   if (list.length === 0) {
-    toast("Barkod verisi boş!");
+    toast("Barkod verisi bulunamadı!");
     return;
   }
 
-  // Her bir base64 için ayrı sekme aç
-  list.forEach((item, index) => {
-    if (!item) return;
-
-    const base64 = item.trim();
+  // Her bir PDF/PNG base64 için ayrı sekme aç
+  list.forEach(base64 => {
+    const trimmed = base64.trim();
 
     // PDF mi PNG mi algıla
     let mimeType = "application/pdf";
 
-    if (base64.startsWith("JVBER")) mimeType = "application/pdf";      // PDF
-    else if (base64.startsWith("iVBOR")) mimeType = "image/png";        // PNG
-    else mimeType = "application/pdf";
+    if (trimmed.startsWith("JVBER")) {
+      mimeType = "application/pdf";
+    } else if (trimmed.startsWith("iVBOR")) {
+      mimeType = "image/png";
+    } else {
+      mimeType = "application/pdf"; // bilinmeyen→PDF varsay
+    }
 
-    const url = `data:${mimeType};base64,${base64}`;
+    const url = `data:${mimeType};base64,${trimmed}`;
     window.open(url, "_blank");
   });
 
   toast(list.length + " adet barkod açıldı.");
 }
+
 
 
 /* ============================================================
