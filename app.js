@@ -842,6 +842,7 @@ async function printBarcode() {
   });
   if (!ok) return;
 
+  // Supabase'den veriyi çek
   const { data, error } = await db
     .from(TABLE)
     .select("zpl_base64")
@@ -854,13 +855,21 @@ async function printBarcode() {
   let raw = data.zpl_base64;
   let list = [];
 
+  // JSON formatını çöz
   try {
     const parsed = JSON.parse(raw);
+
     if (Array.isArray(parsed)) {
       list = parsed
-        .map(item => (item?.data ? item.data : (typeof item === "string" ? item : null)))
+        .map(item => {
+          if (!item) return null;
+          if (typeof item === "string") return item;
+          if (typeof item === "object" && item.data) return item.data;
+          return null;
+        })
         .filter(x => !!x);
     } else list = [raw];
+
   } catch {
     list = [raw];
   }
@@ -876,16 +885,43 @@ async function printBarcode() {
     return new Blob([buffer], { type: mime });
   }
 
+  // Her barkodu ayrı sekmede aç
   list.forEach(b64 => {
+    if (typeof b64 !== "string") return;
+
     const trimmed = b64.trim();
 
+    // PDF / PNG algılaması
     let mime = "application/pdf";
     if (trimmed.startsWith("iVBOR")) mime = "image/png";
 
+    // Blob'a çevir
     const blob = base64ToBlob(trimmed, mime);
-    const url = URL.createObjectURL(blob);
+    const blobUrl = URL.createObjectURL(blob);
 
-    window.open(url, "_blank");
+    // Yeni sekme aç
+    const w = window.open("", "_blank");
+    if (!w) {
+      toast("Pop-up engellendi, izin ver.");
+      return;
+    }
+
+    // Chrome PDF bug fix → iframe içinde aç
+    w.document.write(`
+      <html>
+      <head>
+        <title>Barkod</title>
+        <style>
+          body { margin:0; padding:0; overflow:hidden; background:#000; }
+          iframe { border:0; width:100vw; height:100vh; }
+        </style>
+      </head>
+      <body>
+        <iframe src="${blobUrl}"></iframe>
+      </body>
+      </html>
+    `);
+    w.document.close();
   });
 
   toast(list.length + " adet barkod açıldı.");
