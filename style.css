@@ -727,3 +727,36 @@ body.login-page {
   flex-basis: auto !important;
 }
 
+/* =======================================================
+   TÜM MODAL BUTON GRUPLARI (Edit / Restore / Action)
+   Tek satır — eşit genişlik — taşmasız görünüm
+======================================================= */
+
+/* Ortak container ayarı */
+#actionButtons,
+#editButtons,
+#restoreButtons {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 10px !important;
+  width: 100%;
+  align-items: center;
+}
+
+/* Butonlar eşit büyüklükte olsun */
+#actionButtons button,
+#editButtons button,
+#restoreButtons button {
+  flex: 1 !important;
+  min-width: 0 !important;
+  height: 44px;
+}
+
+/* Buton sırası bozulmasın – tüm order kurallarını sıfırla */
+#actionButtons button,
+#editButtons button,
+#restoreButtons button {
+  order: unset !important;
+  flex-basis: auto !important;
+}
+
