@@ -624,3 +624,49 @@ body.login-page {
   flex: 1;
   min-width: 0;
 }
+
+/* ============================================
+   --- EKLEMEN GEREKEN PREMIUM iOS STİLLERİ ---
+============================================ */
+
+/* Sipariş Detayı başlığı – daha küçük ve sık */
+.modal h2 {
+  font-size: 17px !important;
+  margin: 0 0 8px !important;
+  padding: 0 !important;
+  font-weight: 700;
+  color: #0d2451;
+  letter-spacing: .2px;
+}
+
+/* Modal kartını daha oval ve daha kompakt yap */
+.modal-content {
+  border-radius: 28px !important;    /* daha oval */
+  padding-top: 16px !important;      /* üst boşluğu küçült */
+  padding-left: 26px !important;
+  padding-right: 26px !important;
+}
+
+/* iOS glass morphism butonları */
+#actionButtons button,
+#editButtons button,
+#restoreButtons button {
+  background: rgba(255,255,255,0.15) !important;     /* yarı saydam */
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+
+  border: none !important;           /* ÇERÇEVE TAMAMEN KALDIRILDI */
+  color: #fff !important;            /* yazılar beyaz */
+  font-weight: 600;
+
+  box-shadow: 0 0 18px rgba(0,0,0,0.12);
+  transition: .2s;
+}
+
+#actionButtons button:hover,
+#editButtons button:hover,
+#restoreButtons button:hover {
+  background: rgba(255,255,255,0.25) !important;
+  transform: translateY(-1px);
+}
+
