@@ -149,7 +149,7 @@ body{
 .modal-content {
   width: 550px !important;          /* DAR modal (eski kare görünüm kalkar) */
   max-height: 92vh !important;      /* ekranın %92’sine kadar yükseklik */
-  min-height: 700px !important;     /* daha uzun görünmesi için minimum boy */
+  min-height: 800px !important;     /* daha uzun görünmesi için minimum boy */
   
   overflow-y: auto !important;      /* içerik taşarsa kaydırma */
   background: #fff;
