@@ -241,31 +241,28 @@ body{
 }
 
 
-/* === SADECE BUTONLAR GLASS (CAM) EFEKTİ ALSIN === */
+/* === BUTON RENKLERİNİ KORUYAN iOS CAM STİLİ === */
 #actionButtons button,
 #editButtons button,
 #restoreButtons button {
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
+  
+  /* CAM EFECTİ */
+  backdrop-filter: blur(10px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(160%) !important;
 
-  /* kendi rengini korusun */
-  background: inherit !important;
+  /* RENKLERİ KORU */
+  background: rgba(255,255,255,0.12) !important;  
+  /* Bu transparent katman → buton rengini bozmaz, sadece cam görünümü verir */
 
   border: none !important;
   border-radius: 14px !important;
-  padding: 12px 14px !important;
 
+  padding: 12px 14px !important;
   box-shadow: 0 4px 12px rgba(0,0,0,0.10);
   transition: .15s;
-}
 
-#actionButtons button:hover,
-#editButtons button:hover,
-#restoreButtons button:hover {
-  transform: translateY(-1px);
-  opacity: .95;
+  color: inherit !important;  /* Butonun kendi yazı rengi kalır */
 }
-
 
 
 
