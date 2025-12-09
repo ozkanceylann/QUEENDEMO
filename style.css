@@ -647,8 +647,8 @@ body.login-page {
 
   /* iOS glass highlight */
   background:
-    radial-gradient(100% 55% at 30% 0%, rgba(255,255,255,.38), rgba(255,255,255,0) 60%),
-    linear-gradient(to bottom, rgba(255,255,255,.15), rgba(255,255,255,.05));
+    radial-gradient(100% 55% at 30% 0%, rgba(255,255,255,.22), rgba(255,255,255,0) 60%),
+    linear-gradient(to bottom, rgba(255,255,255,.10), rgba(255,255,255,.03));
 }
 
 /* HOVER */
