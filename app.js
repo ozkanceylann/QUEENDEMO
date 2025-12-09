@@ -836,7 +836,7 @@ async function printBarcode() {
 
   const ok = await confirmModal({
     title: "Barkod Kes",
-    text: "Supabase içerisindeki PDF/PNG barkod dosyaları açılacak.",
+    text: "Supabase içerisindeki barkod PDF/PNG dosyaları açılacak.",
     confirmText: "Aç",
     cancelText: "Vazgeç"
   });
@@ -848,66 +848,43 @@ async function printBarcode() {
     .eq("siparis_no", selectedOrder.siparis_no)
     .single();
 
-  if (error) {
-    toast("Barkod alınamadı: " + error.message);
-    return;
-  }
+  if (error) return toast("Barkod alınamadı!");
+  if (!data?.zpl_base64) return toast("Barkod bulunamadı!");
 
-  let raw = data?.zpl_base64;
-  if (!raw) {
-    toast("Bu sipariş için barkod bulunamadı!");
-    return;
-  }
-
+  let raw = data.zpl_base64;
   let list = [];
 
   try {
-    // JSON array parse et
     const parsed = JSON.parse(raw);
-
     if (Array.isArray(parsed)) {
       list = parsed
-        .map(item => {
-          if (!item) return null;
-
-          // Eğer item direkt base64 string ise
-          if (typeof item === "string") return item;
-
-          // Eğer item obje ise → item.data
-          if (typeof item === "object" && item.data) return item.data;
-
-          return null;
-        })
+        .map(item => (item?.data ? item.data : (typeof item === "string" ? item : null)))
         .filter(x => !!x);
-    } else {
-      // JSON ama array değil → tek data kabul et
-      list = [raw];
-    }
-
+    } else list = [raw];
   } catch {
-    // JSON parse hata verirse → tek base64 kabul et
     list = [raw];
   }
 
-  if (list.length === 0) {
-    toast("Geçerli barkod datası bulunamadı!");
-    return;
+  if (!list.length) return toast("Geçerli barkod bulunamadı!");
+
+  // Base64 → Blob çevirici
+  function base64ToBlob(base64, mime) {
+    const binary = atob(base64);
+    const len = binary.length;
+    const buffer = new Uint8Array(len);
+    for (let i = 0; i < len; i++) buffer[i] = binary.charCodeAt(i);
+    return new Blob([buffer], { type: mime });
   }
 
-  // Her barkod için ayrı sekme aç
-  list.forEach(base64 => {
-    if (typeof base64 !== "string") return;
+  list.forEach(b64 => {
+    const trimmed = b64.trim();
 
-    const trimmed = base64.trim();
+    let mime = "application/pdf";
+    if (trimmed.startsWith("iVBOR")) mime = "image/png";
 
-    // PDF mi PNG mi tespit et
-    let mimeType = "application/pdf";
+    const blob = base64ToBlob(trimmed, mime);
+    const url = URL.createObjectURL(blob);
 
-    if (trimmed.startsWith("JVBER")) mimeType = "application/pdf"; // PDF
-    else if (trimmed.startsWith("iVBOR")) mimeType = "image/png"; // PNG
-    else mimeType = "application/pdf";
-
-    const url = `data:${mimeType};base64,${trimmed}`;
     window.open(url, "_blank");
   });
 
