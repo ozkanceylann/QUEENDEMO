@@ -120,7 +120,7 @@ body{
 
 /* Sorgula / Aç butonu — daha küçük */
 .btn-open{
-  height:24px !important;
+  height:22px !important;
   padding:0 10px !important;
   font-size:11px !important;
   line-height:1 !important;
@@ -190,6 +190,7 @@ body{
 .orders-table tr:hover td {
   background:#d8e9d8 !important;
 }
+
 
 /* ==============================
    MODAL
