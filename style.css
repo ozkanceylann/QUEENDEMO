@@ -705,3 +705,12 @@ body.login-page {
 #editButtons .btn-danger,
 #restoreButtons .btn-danger { --btn-color: var(--danger); color:#fff !important; }
 
+/* Satırın üzerine gelince yazı imleci (text cursor) çıkmasını tamamen engeller */
+.orders-table tr {
+  cursor: default !important;
+}
+
+.orders-table td, 
+.orders-table th {
+  cursor: default !important;
+}
